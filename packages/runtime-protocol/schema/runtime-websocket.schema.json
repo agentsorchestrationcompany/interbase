@@ -1,0 +1,384 @@
+{
+  "clientMethods": [
+    "initialize",
+    "ping",
+    "agent.list",
+    "provider.list",
+    "provider.models",
+    "providerModel.command",
+    "config/bootstrapCodexHome",
+    "account.read",
+    "account.login.start",
+    "account.login.cancel",
+    "account.rateLimits.read",
+    "approval.resolve",
+    "providerChild.serverRequest.respond",
+    "skills.list",
+    "plugin.list",
+    "mcpServerStatus/list",
+    "session.create",
+    "session.read",
+    "session.update",
+    "session.message",
+    "session.close",
+    "nativeShell.prepare",
+    "thread.start",
+    "thread.read",
+    "thread.resume",
+    "thread.fork",
+    "thread.rollback",
+    "thread.shellCommand",
+    "thread.backgroundTerminals.clean",
+    "thread.list",
+    "turn.start",
+    "turn.interrupt",
+    "turn.steer",
+    "shutdown",
+    "subscribe",
+    "unsubscribe",
+    "resume"
+  ],
+  "contractFields": {
+    "runtimeThreadEventEnvelope": ["attachmentId", "event", "sequence", "threadRef", "timestamp"],
+    "runtimeThreadRef": ["providerId", "threadId"],
+    "runtimeProviderInfo": ["id", "models", "name"],
+    "runtimeProviderListResponse": ["all", "connected", "default"],
+    "runtimeProviderModelInfo": ["id", "name", "status"],
+    "runtimeWebSocketAgentAvailability": [
+      "agentId",
+      "available",
+      "capabilities",
+      "displayName",
+      "models",
+      "unavailableReason"
+    ],
+    "runtimeWebSocketAgentCapabilitySet": [
+      "approvals",
+      "attachments",
+      "conversationHistoryReadable",
+      "images",
+      "modelSelection",
+      "nativeExecution",
+      "resume",
+      "sessionContinuation",
+      "streaming",
+      "toolUse"
+    ],
+    "runtimeWebSocketAgentListResponse": ["agents"],
+    "runtimeWebSocketAgentModelOption": [
+      "available",
+      "displayName",
+      "id",
+      "providerId",
+      "providerName",
+      "unavailableReason"
+    ],
+    "runtimeWebSocketProviderThreadResumePayload": ["afterSequence", "clientId", "threadRef"],
+    "runtimeWebSocketProviderThreadSubscriptionPayload": ["afterSequence", "threadRef"],
+    "runtimeWebSocketReplayUnavailablePayload": ["afterSequence", "reason", "recoverable", "subscription"]
+  },
+  "errorCodes": [
+    "RUNTIME_UNAVAILABLE",
+    "SESSION_NOT_FOUND",
+    "SESSION_BUSY",
+    "INVALID_REQUEST",
+    "CAPABILITY_UNAVAILABLE",
+    "PROVIDER_UNAVAILABLE",
+    "PROVIDER_FAILED",
+    "MCP_UNAVAILABLE",
+    "MCP_TOOL_FAILED",
+    "SHELL_SPAWN_FAILED",
+    "SHELL_EXECUTION_FAILED",
+    "APPROVAL_DENIED",
+    "POLICY_UNAVAILABLE",
+    "DAEMON_INTERNAL",
+    "PROTOCOL_ERROR"
+  ],
+  "eventTypes": [
+    "session.created",
+    "session.updated",
+    "session.closed",
+    "thread.started",
+    "thread.updated",
+    "thread.resumed",
+    "thread.forked",
+    "thread.rollback",
+    "session.message.created",
+    "session.run.started",
+    "session.output.delta",
+    "session.output.completed",
+    "session.message.completed",
+    "session.interbase.notification",
+    "session.run.completed",
+    "session.run.failed",
+    "session.item.started",
+    "session.recovery",
+    "provider.child.serverRequest",
+    "tool.call.started",
+    "tool.call.progress",
+    "tool.call.completed",
+    "tool.call.failed",
+    "approval.requested",
+    "approval.resolved",
+    "shell.command.started",
+    "shell.command.output",
+    "shell.command.completed",
+    "shell.command.failed",
+    "mcp.server.status.changed",
+    "daemon.warning",
+    "daemon.error",
+    "run.started",
+    "response.started",
+    "response.output_text.delta",
+    "response.output_text.completed",
+    "response.reasoning.delta",
+    "response.reasoning.completed",
+    "response.output_structured.completed",
+    "tool.requested",
+    "tool.updated",
+    "tool.completed",
+    "tool.failed",
+    "tool.cancelled",
+    "provider.session.updated",
+    "provider.usage.reported",
+    "provider.metadata.attached",
+    "response.completed",
+    "response.failed",
+    "response.cancelled",
+    "run.completed",
+    "run.failed",
+    "run.cancelled"
+  ],
+  "protocolVersion": "0.1.6",
+  "supportedProtocolVersions": ["0.1.5", "0.1.6"],
+  "runtimeProviderInfoFields": ["id", "models", "name"],
+  "runtimeProviderListResponseFields": ["all", "connected", "default"],
+  "runtimeProviderModelInfoFields": ["id", "name", "status"],
+  "providerModelCommandTypes": [
+    "model.current",
+    "model.list",
+    "model.set",
+    "provider.current",
+    "provider.list",
+    "provider.set"
+  ],
+  "metadataResponseShapes": {
+    "initialize": {
+      "fields": ["acceptedRuntimeApiVersion", "capabilities", "protocolVersion", "serverName", "serverVersion"]
+    },
+    "ping": {
+      "fields": ["message", "timestamp"]
+    }
+  },
+  "responsePayloadKinds": [
+    "acknowledgement",
+    "account",
+    "credential",
+    "metadata",
+    "provider",
+    "session",
+    "thread",
+    "turn",
+    "replay",
+    "shell",
+    "unknown"
+  ],
+  "responseSchemas": [
+    {
+      "method": "initialize",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "ping",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "agent.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "provider.list",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "provider.models",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "providerModel.command",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "config/bootstrapCodexHome",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.read",
+      "payloadKind": "account",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.login.start",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.login.cancel",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.rateLimits.read",
+      "payloadKind": "account",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "approval.resolve",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "providerChild.serverRequest.respond",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "skills.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "plugin.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "mcpServerStatus/list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.create",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.read",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.update",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.message",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.close",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "nativeShell.prepare",
+      "payloadKind": "shell",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.start",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.read",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.resume",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.fork",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.rollback",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.shellCommand",
+      "payloadKind": "shell",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.backgroundTerminals.clean",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.list",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.start",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.interrupt",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.steer",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "shutdown",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "subscribe",
+      "payloadKind": "replay",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "unsubscribe",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "resume",
+      "payloadKind": "replay",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    }
+  ],
+  "serverMessageTypes": [
+    "response",
+    "error",
+    "event",
+    "delivery",
+    "serverRequest",
+    "heartbeat",
+    "protocolVersionMismatch"
+  ],
+  "replaySubscriptionTarget": "providerThreadRef",
+  "subscriptionTargets": ["sessionCompatibility", "providerThreadRef"]
+}

@@ -1,0 +1,241 @@
+{
+  "extensionClientMethods": [
+    "directory.list",
+    "directory.select",
+    "session.list",
+    "activeChats.list",
+    "chat.start",
+    "session.messages",
+    "goal.get",
+    "goal.list",
+    "goal.create",
+    "goal.edit",
+    "goal.update",
+    "goal.clear",
+    "goal.pause",
+    "goal.resume",
+    "alias.list",
+    "alias.get",
+    "alias.set",
+    "alias.delete",
+    "git.status"
+  ],
+  "contractFields": {
+    "remoteRuntimeActiveChatMetadataProjection": [
+      "agent",
+      "createdAt",
+      "goal",
+      "hasActiveTurn",
+      "lastText",
+      "messageCount",
+      "model",
+      "path",
+      "projectId",
+      "providerId",
+      "providerName",
+      "sessionId",
+      "status",
+      "title",
+      "updatedAt"
+    ],
+    "remoteRuntimeActiveChatsPageInfo": ["hasNewer", "hasOlder", "newerCursor", "olderCursor"],
+    "remoteRuntimeActiveChatsResponse": ["activeChats", "pageInfo"],
+    "remoteRuntimeGoalsPageInfo": ["hasOlder", "olderCursor"],
+    "remoteRuntimeGoalsListResponse": ["goals", "pageInfo"],
+    "remoteRuntimeChatMessagePartProjection": ["id", "kind", "messageId", "rawPart", "text", "title", "status"],
+    "remoteRuntimeChatMessageProjection": [
+      "agent",
+      "completedAt",
+      "createdAt",
+      "errorMessage",
+      "errorName",
+      "finishReason",
+      "id",
+      "model",
+      "parentId",
+      "parts",
+      "role",
+      "sessionId"
+    ],
+    "remoteRuntimeThreadMetadataProjection": [
+      "lastEventSequence",
+      "model",
+      "providerId",
+      "replay",
+      "status",
+      "threadId",
+      "updatedAt"
+    ],
+    "runtimeWebSocketAllowedDirectory": ["directoryId", "displayName", "path"],
+    "runtimeWebSocketDirectoryAttachment": ["directoryId", "gatewayRuntimeAttachmentId", "path", "status"],
+    "runtimeWebSocketDirectoryListResponse": ["activeDirectoryAttachments", "allowedDirectories"],
+    "runtimeWebSocketDirectorySelectResponse": ["attachment", "directory"],
+    "runtimeWebSocketEventSignatureProof": [
+      "algorithm",
+      "eventPayload",
+      "eventPayloadSha256",
+      "keyId",
+      "signature",
+      "timestamp"
+    ]
+  },
+  "remoteRuntimeActiveChatMetadataProjectionFields": [
+    "agent",
+    "createdAt",
+    "goal",
+    "hasActiveTurn",
+    "lastText",
+    "messageCount",
+    "model",
+    "path",
+    "projectId",
+    "providerId",
+    "providerName",
+    "sessionId",
+    "status",
+    "title",
+    "updatedAt"
+  ],
+  "remoteRuntimeChatMessagePartProjectionFields": ["id", "kind", "messageId", "rawPart", "text", "title", "status"],
+  "remoteRuntimeChatMessageProjectionFields": [
+    "agent",
+    "completedAt",
+    "createdAt",
+    "errorMessage",
+    "errorName",
+    "finishReason",
+    "id",
+    "model",
+    "parentId",
+    "parts",
+    "role",
+    "sessionId"
+  ],
+  "remoteRuntimeThreadMetadataProjectionFields": [
+    "providerId",
+    "threadId",
+    "status",
+    "updatedAt",
+    "lastEventSequence",
+    "model",
+    "replay"
+  ],
+  "remoteRuntimeThreadStatuses": ["idle", "running", "error", "closed", "interrupted"],
+  "metadataResponseShapes": {
+    "initialize": {
+      "fields": [
+        "acceptedRuntimeApiVersion",
+        "activeChats",
+        "activeDirectoryAttachments",
+        "allowedDirectories",
+        "attachmentCapabilities",
+        "featureCapabilities",
+        "protocolVersion",
+        "serverName",
+        "serverVersion",
+        "supportedMethods"
+      ]
+    },
+    "ping": {
+      "fields": ["message", "timestamp"]
+    }
+  },
+  "responsePayloadKinds": ["metadata", "session", "goal", "alias", "git"],
+  "responseSchemas": [
+    {
+      "method": "directory.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "directory.select",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.list",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "activeChats.list",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "chat.start",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.messages",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.get",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.list",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.create",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.edit",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.update",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.clear",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.pause",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.resume",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.list",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.get",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.set",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.delete",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "git.status",
+      "payloadKind": "git",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    }
+  ]
+}

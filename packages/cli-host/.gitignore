@@ -1,0 +1,8 @@
+research
+bin
+dist
+dist-*
+gen
+app.log
+temporary-*.md
+.artifacts

@@ -1,0 +1,24 @@
+{
+  "name": "@interbase/cli-runtime-context",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "bun test test/*.test.ts --coverage --coverage-reporter=lcov",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "effect": "4.0.0-beta.59"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.12",
+    "@types/node": "^24.5.2",
+    "typescript": "5.8.2"
+  }
+}

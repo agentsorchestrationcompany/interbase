@@ -1,0 +1,1565 @@
+{
+  "encryptedRuntimePayloadAlgorithms": ["aes-256-gcm"],
+  "encryptedRuntimePayloadContentTypes": ["runtimeWebSocketClientCommand"],
+  "failureCodes": [
+    "ATTACHMENT_REVOKED",
+    "AUTHORIZATION_FAILED",
+    "DEVICE_REVOKED",
+    "IDEMPOTENCY_CONFLICT",
+    "PAYLOAD_TOO_LARGE",
+    "PAIRING_EXPIRED",
+    "PAIRING_KEY_REJECTED",
+    "PAIRING_SUPERSEDED",
+    "PROTOCOL_MISMATCH",
+    "RUNTIME_COMMAND_FAILED",
+    "RUNTIME_REVOKED",
+    "RUNTIME_UNAVAILABLE",
+    "VALIDATION_FAILED"
+  ],
+  "localRemoteRuntimeRequestIdHeaderName": "Interbase-Remote-Runtime-Request-Id",
+  "localRuntimeAccessTokenHeaderName": "Interbase-Local-Runtime-Access-Token",
+  "localRuntimeAccessTokenIdHeaderName": "Interbase-Local-Runtime-Access-Token-Id",
+  "remoteRuntimeHttpContractVersion": "2026-05-14",
+  "remoteRuntimeHttpFailureCodes": ["REMOTE_RUNTIME_HTTP_VERSION_MISMATCH"],
+  "remoteRuntimeHttpRequestSignatureHeaderNames": [
+    "Interbase-Remote-Runtime-Key-Id",
+    "Interbase-Remote-Runtime-Signature-Algorithm",
+    "Interbase-Remote-Runtime-Signature-Timestamp",
+    "Interbase-Remote-Runtime-Signature-Nonce",
+    "Interbase-Remote-Runtime-Body-SHA256",
+    "Interbase-Remote-Runtime-Signature"
+  ],
+  "remoteRuntimeHttpResponseSignatureHeaderNames": [
+    "Interbase-Runtime-Response-Key-Id",
+    "Interbase-Runtime-Response-Signature-Algorithm",
+    "Interbase-Runtime-Response-Signature-Timestamp",
+    "Interbase-Runtime-Response-Signature-Nonce",
+    "Interbase-Runtime-Response-Body-SHA256",
+    "Interbase-Runtime-Response-Signature"
+  ],
+  "remoteRuntimeHttpVersionHeaderName": "Interbase-Remote-Runtime-HTTP-Version",
+  "runtimeConnectionCandidateEnvironments": ["simulator", "physicalDevice", "lan", "tunnel", "gateway"],
+  "runtimeConnectionCandidateHostReachabilities": ["loopback", "lan", "public"],
+  "remoteRuntimeTransportPairingActions": ["keep", "re_pair", "retry", "upgrade_app", "upgrade_cli"],
+  "remoteRuntimeWebSocketContractVersion": "2026-05-14",
+  "remoteRuntimeWebSocketPublicKeyHeaderName": "Interbase-Remote-Runtime-Public-Key",
+  "remoteRuntimeWebSocketVersionHeaderName": "Interbase-Remote-Runtime-WebSocket-Version",
+  "remoteRuntimePublicKeyAlgorithms": ["ed25519"],
+  "remoteRuntimePublicKeyEncodings": ["base64url"],
+  "remoteRuntimePublicKeyPurposes": ["remoteRuntimeRequestSigning", "runtimeResponseSigning"],
+  "remoteRuntimeRealtimeEventTypes": [
+    "runtime.status.changed",
+    "activeChats.changed",
+    "chat.changed",
+    "chatMessages.changed",
+    "goals.changed",
+    "aliases.changed",
+    "chat.stream.delta",
+    "chat.stream.part",
+    "operation.completed",
+    "operation.failed"
+  ],
+  "remoteRuntimeRealtimeResourceKinds": [
+    "runtime",
+    "activeChats",
+    "chat",
+    "chatMessages",
+    "goals",
+    "aliases",
+    "providers"
+  ],
+  "remoteRuntimeRequestSignatureAlgorithms": ["ed25519"],
+  "remoteRuntimeCapabilities": [
+    "remoteRuntime.http.activeChats",
+    "remoteRuntime.http.chatDetail",
+    "remoteRuntime.http.chatMessages",
+    "remoteRuntime.http.goals",
+    "remoteRuntime.http.providers",
+    "remoteRuntime.http.runtimeDirectories",
+    "remoteRuntime.http.runtimeStatus",
+    "remoteRuntime.http.startChat",
+    "remoteRuntime.http.sendMessage",
+    "remoteRuntime.http.updateChat",
+    "remoteRuntime.git.read",
+    "remoteRuntime.goal.read",
+    "remoteRuntime.goal.list",
+    "remoteRuntime.goal.mutate",
+    "remoteRuntime.goal.events",
+    "remoteRuntime.alias.read",
+    "remoteRuntime.alias.list",
+    "remoteRuntime.alias.mutate",
+    "remoteRuntime.alias.events",
+    "remoteRuntime.websocket.realtimeEvents",
+    "remoteRuntime.websocket.streamDeltas"
+  ],
+  "remoteRuntimeStatusSnapshotStates": ["online", "degraded", "offline", "revoked", "unavailable"],
+  "previousRemoteRuntimeHttpContractVersion": "2026-05-08",
+  "previousRuntimeWebSocketRemoteRuntimeProtocolVersion": "0.1.5",
+  "currentRemoteRuntimeSupportedVersions": {
+    "remoteRuntimeHttp": ["2026-05-08", "2026-05-14"],
+    "remoteRuntimeTransport": ["2026-05-08"],
+    "runtimeWebSocket": ["0.1.5", "0.1.6"]
+  },
+  "runtimeConnectionCandidateKinds": ["direct", "cloudflareTunnel", "zrokPublicHttp", "interbaseRelay"],
+  "supportedRemoteRuntimeHttpContractVersions": ["2026-05-08", "2026-05-14"],
+  "supportedRemoteRuntimeTransportProtocolVersions": ["2026-05-08"],
+  "supportedRuntimeWebSocketRemoteRuntimeProtocolVersions": ["0.1.5", "0.1.6"],
+  "contractFields": {
+    "activeChatsChangedPayload": ["reason", "chat", "invalidates"],
+    "chatChangedPayload": ["sessionId", "chat", "invalidatesMessages"],
+    "chatMessagesChangedPayload": ["sessionId", "reason", "message", "invalidates"],
+    "goalsChangedPayload": ["goal", "invalidates", "sessionId"],
+    "aliasesChangedPayload": ["alias", "invalidates"],
+    "chatStreamDeltaPayload": ["sessionId", "messageId", "partId", "field", "delta"],
+    "chatStreamPartPayload": ["sessionId", "messageId", "partId", "part", "truncated"],
+    "gatewayRuntimeAttachment": [
+      "accountId",
+      "attachmentCapabilities",
+      "connectorVersion",
+      "deviceTrustLevel",
+      "directoryId",
+      "directoryPath",
+      "gatewayRuntimeAttachmentId",
+      "runtimeInstallationId",
+      "status"
+    ],
+    "gatewayRuntimeAttachmentRegistrationRequest": [
+      "accountId",
+      "attachmentCapabilities",
+      "connectorVersion",
+      "directoryId",
+      "directoryPath",
+      "protocolVersion",
+      "requestId",
+      "runtimeInstallationId",
+      "ticket"
+    ],
+    "remoteRuntimeActiveChatsSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "activeChats",
+      "pageInfo",
+      "snapshotId",
+      "resourceVersion"
+    ],
+    "runtimeClientAsymmetricPublicKey": ["algorithm", "createdAt", "encoding", "keyId", "publicKey", "purpose"],
+    "remoteRuntimeCanonicalHttpSigningPayload": ["algorithm", "payload"],
+    "remoteRuntimeCanonicalHttpSigningPayloadInput": [
+      "bodySha256",
+      "canonicalPath",
+      "canonicalQuery",
+      "idempotencyKey",
+      "keyId",
+      "localRuntimeAccessTokenId",
+      "method",
+      "remoteRuntimeHttpVersion",
+      "nonce",
+      "requestId",
+      "runtimeInstallationId",
+      "timestamp",
+      "trustedRuntimeClientId"
+    ],
+    "remoteRuntimeCanonicalWebSocketActionSigningPayload": ["algorithm", "payload"],
+    "remoteRuntimeCanonicalWebSocketActionSigningPayloadInput": [
+      "keyId",
+      "nonce",
+      "payloadSha256",
+      "requestId",
+      "runtimeInstallationId",
+      "sequence",
+      "sessionNonce",
+      "timestamp",
+      "trustedRuntimeClientId"
+    ],
+    "remoteRuntimeWebSocketActionSignatureProof": [
+      "algorithm",
+      "keyId",
+      "nonce",
+      "payloadSha256",
+      "signature",
+      "timestamp"
+    ],
+    "remoteRuntimeWebSocketSessionAccepted": ["protocolVersion", "sessionNonce", "type"],
+    "remoteRuntimeWebSocketSignedAction": ["payload", "proof", "protocolVersion", "sequence", "sessionNonce", "type"],
+    "remoteRuntimeChatMessagesSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "sessionId",
+      "messages",
+      "pageInfo",
+      "resourceVersion"
+    ],
+    "remoteRuntimeChatSnapshot": ["remoteRuntimeHttpVersion", "runtimeInstallationId", "chat", "resourceVersion"],
+    "remoteRuntimeGoalsSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "goals",
+      "pageInfo",
+      "resourceVersion"
+    ],
+    "remoteRuntimeGitStatusSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "repositories",
+      "resourceVersion"
+    ],
+    "remoteRuntimeAliasesSnapshot": ["remoteRuntimeHttpVersion", "runtimeInstallationId", "aliases", "resourceVersion"],
+    "remoteRuntimeProvidersSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "providers",
+      "resourceVersion"
+    ],
+    "remoteRuntimeHttpRequestSignatureProof": ["algorithm", "bodySha256", "keyId", "nonce", "signature", "timestamp"],
+    "clientAttachment": [
+      "accountId",
+      "deviceTrustLevel",
+      "gatewayRuntimeAttachmentId",
+      "clientAttachmentId",
+      "runtimeInstallationId",
+      "status",
+      "trustedRuntimeClientId"
+    ],
+    "clientAttachmentRequest": [
+      "accountId",
+      "deviceTrustLevel",
+      "protocolVersion",
+      "requestId",
+      "runtimeInstallationId",
+      "ticket",
+      "trustedRuntimeClientId"
+    ],
+    "remoteRuntimeTransportFailureEnvelope": [
+      "code",
+      "message",
+      "pairingAction",
+      "protocolVersion",
+      "requestId",
+      "replacementRuntimeInstallationId",
+      "runtimeInstallationId",
+      "terminal",
+      "type"
+    ],
+    "remoteRuntimeEncryptedPayload": ["algorithm", "ciphertext", "contentType", "keyId", "nonce"],
+    "remoteRuntimeHttpVersionMismatchFailure": ["code", "message", "receivedVersion", "supportedVersions", "requestId"],
+    "remoteRuntimeOperationCompletedPayload": ["requestId", "idempotencyKey", "resource"],
+    "remoteRuntimeOperationFailedPayload": ["requestId", "idempotencyKey", "error", "resource"],
+    "remoteRuntimeRealtimeEventEnvelope": ["protocolVersion", "type", "event"],
+    "remoteRuntimeRealtimeResourceRef": ["kind", "runtimeInstallationId", "sessionId"],
+    "remoteRuntimeCapabilitiesSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "attachmentCapabilities",
+      "featureCapabilities",
+      "supportedMethods"
+    ],
+    "remoteRuntimeDirectoriesSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "activeDirectoryAttachments",
+      "allowedDirectories"
+    ],
+    "remoteRuntimeStatusSnapshot": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "allowedDirectories",
+      "gatewayRuntimeAttachmentId",
+      "state",
+      "connectorVersion",
+      "lastHeartbeatAt",
+      "attachmentCapabilities"
+    ],
+    "remoteRuntimeSendChatMessageRequest": [
+      "requestId",
+      "runtimeInstallationId",
+      "sessionId",
+      "input",
+      "idempotencyKey"
+    ],
+    "remoteRuntimeSendChatMessageResponse": [
+      "remoteRuntimeHttpVersion",
+      "runtimeInstallationId",
+      "sessionId",
+      "message",
+      "acceptedAt"
+    ],
+    "remoteRuntimeStartChatRequest": [
+      "requestId",
+      "runtimeInstallationId",
+      "directoryId",
+      "providerId",
+      "model",
+      "title",
+      "idempotencyKey"
+    ],
+    "remoteRuntimeStartChatResponse": ["remoteRuntimeHttpVersion", "runtimeInstallationId", "chat"],
+    "remoteRuntimeUpdateChatRequest": ["requestId", "runtimeInstallationId", "sessionId", "input", "idempotencyKey"],
+    "remoteRuntimeUpdateChatResponse": ["remoteRuntimeHttpVersion", "runtimeInstallationId", "chat"],
+    "runtimeStatusChangedPayload": ["status"],
+    "runtimeOperationFrame": [
+      "deviceTrustLevel",
+      "encryptedPayload",
+      "gatewayRuntimeAttachmentId",
+      "idempotencyKey",
+      "clientAttachmentId",
+      "operationClass",
+      "payload",
+      "protocolVersion",
+      "replyTarget",
+      "requestId",
+      "trustedGatewayHttpRequest",
+      "type"
+    ],
+    "runtimeStatusFrame": [
+      "attachmentCapabilities",
+      "connectorVersion",
+      "gatewayRuntimeAttachmentId",
+      "protocolVersion",
+      "replay",
+      "requestId",
+      "runtimeApiVersion",
+      "sequence",
+      "status",
+      "type"
+    ],
+    "runtimeResponseFrame": [
+      "envelope",
+      "gatewayRuntimeAttachmentId",
+      "clientAttachmentId",
+      "protocolVersion",
+      "requestId",
+      "type"
+    ],
+    "runtimeConnectionCandidate": [
+      "baseHttpUrl",
+      "candidateId",
+      "edgeAccess",
+      "environment",
+      "expiresAt",
+      "hostReachability",
+      "kind",
+      "localRuntimeAccessToken",
+      "localRuntimeAccessTokenId",
+      "remoteRuntimeRequestSigningKeyId",
+      "priority",
+      "runtimeInstallationId",
+      "runtimeResponseSigningPublicKey",
+      "trustedRuntimeClientId",
+      "webSocketUrl"
+    ],
+    "runtimeConnectionCandidateBootstrap": [
+      "baseHttpUrl",
+      "candidateId",
+      "edgeAccess",
+      "environment",
+      "expiresAt",
+      "hostReachability",
+      "kind",
+      "localRuntimeAccessToken",
+      "localRuntimeAccessTokenId",
+      "priority",
+      "runtimeInstallationId",
+      "runtimeResponseSigningPublicKey",
+      "webSocketUrl"
+    ],
+    "localRuntimeConnectorAuditEvent": [
+      "action",
+      "encrypted",
+      "gatewayRuntimeAttachmentId",
+      "idempotencyKeyPresent",
+      "method",
+      "clientAttachmentId",
+      "operationClass",
+      "outerRequestId",
+      "reason",
+      "requestId",
+      "subcommand"
+    ]
+  },
+  "localRuntimeConnectorAuditActions": ["runtime.command.denied", "runtime.command.forwarded"],
+  "messageTypes": [
+    "gatewayRuntime.attach",
+    "client.attach",
+    "runtime.operation",
+    "runtime.response",
+    "runtime.status",
+    "attachment.revoked",
+    "runtime.unavailable",
+    "authorization.failed",
+    "idempotency.conflict",
+    "pairing.invalid",
+    "runtime.command.failed",
+    "heartbeat",
+    "protocol.mismatch"
+  ],
+  "remoteRuntimeReplaySubscriptionTarget": "providerThreadRef",
+  "operationalPolicy": {
+    "auditRetentionDays": 90,
+    "background": {
+      "backgroundRefreshCadenceMinutes": 15,
+      "correctnessRequiresBackgroundSocket": false,
+      "foregroundConnectionModel": "webSocket",
+      "notificationHintCategories": ["runtime.available", "runtime.revoked", "coordination.changed"],
+      "notificationHintTransport": "apnsOrBackgroundRefresh",
+      "privilegedContinuationAllowed": false
+    },
+    "limits": {
+      "maxRemoteRuntimeClientAttachmentsPerRuntime": 8,
+      "maxOperationsPerRemoteRuntimeClientAttachment": 120,
+      "maxQueuedRuntimeOperationsPerRuntime": 120,
+      "maxRuntimeOperationPayloadBytes": 65536
+    },
+    "replay": {
+      "compatibilitySessionReplayAuthority": false,
+      "durableThreadReplayTarget": "providerThreadRef"
+    }
+  },
+  "operationClasses": ["metadataRead", "sensitiveRead", "mutation", "privilegedExecution", "credential", "shutdown"],
+  "operationPolicies": [
+    {
+      "auditRequired": false,
+      "class": "metadataRead",
+      "encryptionRequired": false,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": true,
+      "requiredAttachmentCapability": "runtime.metadata",
+      "requiredDeviceTrustLevel": "paired",
+      "responseSensitivity": "metadata",
+      "method": "initialize",
+      "subcommand": null
+    },
+    {
+      "auditRequired": false,
+      "class": "metadataRead",
+      "encryptionRequired": false,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": true,
+      "requiredAttachmentCapability": "runtime.metadata",
+      "requiredDeviceTrustLevel": "paired",
+      "responseSensitivity": "metadata",
+      "method": "ping",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "agent.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "provider.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "provider.models",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "model.current"
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "model.list"
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "model.set"
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "provider.current"
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "provider.list"
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerModel.command",
+      "subcommand": "provider.set"
+    },
+    {
+      "auditRequired": true,
+      "class": "credential",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.credential",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "credential",
+      "method": "config/bootstrapCodexHome",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "credential",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.credential",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "credential",
+      "method": "account.read",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "credential",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.credential",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "credential",
+      "method": "account.login.start",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "credential",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.credential",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "credential",
+      "method": "account.login.cancel",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "account.rateLimits.read",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "approval.resolve",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "providerChild.serverRequest.respond",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "skills.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "plugin.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "mcpServerStatus/list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.create",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.read",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.update",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.message",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.close",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "nativeShell.prepare",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.start",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.read",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.resume",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.fork",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.rollback",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.shellCommand",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.backgroundTerminals.clean",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "thread.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "turn.start",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "turn.interrupt",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "privilegedExecution",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.privilegedExecution",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "turn.steer",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "shutdown",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.shutdown",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "none",
+      "method": "shutdown",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "subscribe",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "unsubscribe",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "resume",
+      "subcommand": null
+    },
+    {
+      "auditRequired": false,
+      "class": "metadataRead",
+      "encryptionRequired": false,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": true,
+      "requiredAttachmentCapability": "runtime.metadata",
+      "requiredDeviceTrustLevel": "paired",
+      "responseSensitivity": "metadata",
+      "method": "directory.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": false,
+      "class": "metadataRead",
+      "encryptionRequired": false,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": true,
+      "requiredAttachmentCapability": "runtime.metadata",
+      "requiredDeviceTrustLevel": "paired",
+      "responseSensitivity": "metadata",
+      "method": "directory.select",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "activeChats.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "chat.start",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "session.messages",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.get",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.create",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.edit",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.update",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.clear",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.pause",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "goal.resume",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "alias.list",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "alias.get",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "alias.set",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "mutation",
+      "encryptionRequired": true,
+      "idempotencyRequired": true,
+      "localApprovalPolicyRequired": true,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.mutate",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "alias.delete",
+      "subcommand": null
+    },
+    {
+      "auditRequired": true,
+      "class": "sensitiveRead",
+      "encryptionRequired": true,
+      "idempotencyRequired": false,
+      "localApprovalPolicyRequired": false,
+      "metadataSliceAllowed": false,
+      "requiredAttachmentCapability": "runtime.sensitiveRead",
+      "requiredDeviceTrustLevel": "trusted",
+      "responseSensitivity": "sensitive",
+      "method": "git.status",
+      "subcommand": null
+    }
+  ],
+  "protocolVersion": "2026-05-08",
+  "responseSensitivities": ["none", "metadata", "sensitive", "credential"],
+  "runtimeWebSocketRemoteRuntimeProtocolVersion": "0.1.6",
+  "runtimeMethods": [
+    "initialize",
+    "ping",
+    "agent.list",
+    "provider.list",
+    "provider.models",
+    "providerModel.command",
+    "config/bootstrapCodexHome",
+    "account.read",
+    "account.login.start",
+    "account.login.cancel",
+    "account.rateLimits.read",
+    "approval.resolve",
+    "providerChild.serverRequest.respond",
+    "skills.list",
+    "plugin.list",
+    "mcpServerStatus/list",
+    "session.create",
+    "session.read",
+    "session.update",
+    "session.message",
+    "session.close",
+    "nativeShell.prepare",
+    "thread.start",
+    "thread.read",
+    "thread.resume",
+    "thread.fork",
+    "thread.rollback",
+    "thread.shellCommand",
+    "thread.backgroundTerminals.clean",
+    "thread.list",
+    "turn.start",
+    "turn.interrupt",
+    "turn.steer",
+    "shutdown",
+    "subscribe",
+    "unsubscribe",
+    "resume",
+    "directory.list",
+    "directory.select",
+    "session.list",
+    "activeChats.list",
+    "chat.start",
+    "session.messages",
+    "goal.get",
+    "goal.list",
+    "goal.create",
+    "goal.edit",
+    "goal.update",
+    "goal.clear",
+    "goal.pause",
+    "goal.resume",
+    "alias.list",
+    "alias.get",
+    "alias.set",
+    "alias.delete",
+    "git.status"
+  ],
+  "runtimeProviderModelCommandTypes": [
+    "model.current",
+    "model.list",
+    "model.set",
+    "provider.current",
+    "provider.list",
+    "provider.set"
+  ],
+  "runtimeResponseSchemas": [
+    {
+      "method": "initialize",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "ping",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "agent.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "provider.list",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "provider.models",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "providerModel.command",
+      "payloadKind": "provider",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "config/bootstrapCodexHome",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.read",
+      "payloadKind": "account",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.login.start",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.login.cancel",
+      "payloadKind": "credential",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "account.rateLimits.read",
+      "payloadKind": "account",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "approval.resolve",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "providerChild.serverRequest.respond",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "skills.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "plugin.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "mcpServerStatus/list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.create",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.read",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.update",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.message",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.close",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "nativeShell.prepare",
+      "payloadKind": "shell",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.start",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.read",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.resume",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.fork",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.rollback",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.shellCommand",
+      "payloadKind": "shell",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.backgroundTerminals.clean",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "thread.list",
+      "payloadKind": "thread",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.start",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.interrupt",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "turn.steer",
+      "payloadKind": "turn",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "shutdown",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "subscribe",
+      "payloadKind": "replay",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "unsubscribe",
+      "payloadKind": "acknowledgement",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "resume",
+      "payloadKind": "replay",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "directory.list",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "directory.select",
+      "payloadKind": "metadata",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.list",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "activeChats.list",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "chat.start",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "session.messages",
+      "payloadKind": "session",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.get",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.list",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.create",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.edit",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.update",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.clear",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.pause",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "goal.resume",
+      "payloadKind": "goal",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.list",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.get",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.set",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "alias.delete",
+      "payloadKind": "alias",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    },
+    {
+      "method": "git.status",
+      "payloadKind": "git",
+      "serverMessageTypes": ["response", "error", "heartbeat", "protocolVersionMismatch"]
+    }
+  ],
+  "trustLevels": ["untrusted", "paired", "trusted"]
+}

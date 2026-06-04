@@ -1,0 +1,9 @@
+*
+!bin/interbase
+!bin/interbase.cjs
+!LICENSE
+!migration/**
+!NOTICE
+!package.json
+!README.md
+!src/**

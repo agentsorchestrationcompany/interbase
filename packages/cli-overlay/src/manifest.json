@@ -1,0 +1,51 @@
+{
+  "brand": {
+    "productName": "Interbase",
+    "binaryName": "interbase",
+    "configFileName": "interbase.json",
+    "localConfigDir": ".interbase",
+    "docsUrl": "https://interbase.ai/docs"
+  },
+  "release": {
+    "npmPackage": "interbase",
+    "githubRepository": "agentsorchestrationcompany/interbase",
+    "homebrewTap": "agentsorchestrationcompany/homebrew-tap",
+    "wrapperRoot": "packages/cli",
+    "implementationRoot": "packages/cli-host"
+  },
+  "commands": [
+    { "name": "doctor", "aliases": [], "required": true, "surface": "top-level", "owner": "interbase" },
+    { "name": "provider", "aliases": ["connect"], "required": true, "surface": "tui-slash", "owner": "interbase" },
+    { "name": "goal", "aliases": [], "required": true, "surface": "tui-slash", "owner": "interbase" },
+    { "name": "aliases", "aliases": [], "required": true, "surface": "tui-slash", "owner": "interbase" }
+  ],
+  "plugins": [
+    { "id": "interbase-provider-catalog", "required": true, "runtime": "server", "owner": "interbase" },
+    { "id": "interbase-goal", "required": true, "runtime": "server", "owner": "interbase" },
+    { "id": "interbase-goal-tui", "required": true, "runtime": "tui", "owner": "interbase" },
+    { "id": "interbase-aliases-tui", "required": true, "runtime": "tui", "owner": "interbase" }
+  ],
+  "configTransforms": [
+    { "id": "interbase-default-keymap", "required": true, "owner": "interbase" },
+    { "id": "interbase-theme-scheme-migration", "required": true, "owner": "interbase" },
+    { "id": "interbase-required-plugin-defaults", "required": true, "owner": "interbase" }
+  ],
+  "themes": [{ "id": "interbase", "displayName": "Interbase", "required": true, "owner": "interbase" }],
+  "keybindDefaults": {
+    "agent_cycle": "shift+tab",
+    "agent_cycle_reverse": "none",
+    "input_submit": "return,tab"
+  },
+  "themeScheme": {
+    "storageKey": "theme_scheme",
+    "legacyModeKey": "theme_mode",
+    "legacyLockKey": "theme_mode_lock",
+    "defaultScheme": "system",
+    "values": ["system", "light", "dark"],
+    "commands": [
+      { "scheme": "system", "title": "Use system theme mode", "value": "theme.scheme.system", "category": "System" },
+      { "scheme": "light", "title": "Use light theme mode", "value": "theme.scheme.light", "category": "System" },
+      { "scheme": "dark", "title": "Use dark theme mode", "value": "theme.scheme.dark", "category": "System" }
+    ]
+  }
+}

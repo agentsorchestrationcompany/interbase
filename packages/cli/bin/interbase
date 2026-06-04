@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process'
+const target = "/Users/rk/Developer/agentsorchestrationcompany/interbase/packages/cli-host/bin/interbase"
+const result = spawnSync(target, process.argv.slice(2), { stdio: 'inherit' })
+if (result.error) {
+  console.error(result.error.message)
+  process.exit(1)
+}
+process.exit(result.status ?? 0)

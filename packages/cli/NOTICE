@@ -1,0 +1,7 @@
+Interbase CLI wrapper package
+
+This package contains the public Interbase CLI npm wrapper, including the launcher, package metadata, and release-facing legal files.
+
+Copyright in this package is held by Agents Orchestration Company, with preserved attribution for any OpenCode-derived portions.
+
+OpenCode-derived code remains under the MIT license included in `LICENSE`.

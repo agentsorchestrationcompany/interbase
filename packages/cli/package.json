@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "interbase",
+  "version": "0.0.0-development",
+  "description": "Public Interbase CLI wrapper package.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentsorchestrationcompany/interbase"
+  },
+  "homepage": "https://github.com/agentsorchestrationcompany/interbase",
+  "bugs": {
+    "url": "https://github.com/agentsorchestrationcompany/interbase/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/interbase.cjs",
+    "postinstall.mjs",
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md",
+    "README.md"
+  ],
+  "bin": {
+    "interbase": "./bin/interbase.cjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "interbase",
+    "cli",
+    "ai"
+  ],
+  "optionalDependencies": {}
+}

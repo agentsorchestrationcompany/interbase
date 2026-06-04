@@ -1,0 +1,5 @@
+{
+  "hostContractVersion": 1,
+  "implementationRoot": "packages/cli-host",
+  "extensionSeams": ["server-built-ins", "tui-built-ins", "config-transforms", "themes", "keybind-defaults"]
+}

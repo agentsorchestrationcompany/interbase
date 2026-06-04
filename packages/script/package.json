@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "@interbase/script",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentsorchestrationcompany/interbase"
+  },
+  "homepage": "https://github.com/agentsorchestrationcompany/interbase",
+  "bugs": {
+    "url": "https://github.com/agentsorchestrationcompany/interbase/issues"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "semver": "^7.6.3"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/semver": "^7.5.8"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

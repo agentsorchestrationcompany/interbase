@@ -1,0 +1,173 @@
+[
+  {
+    "path": "^LICENSE$|^packages/cli/LICENSE$|^packages/cli-host/LICENSE$",
+    "pattern": "opencode",
+    "category": "legal_attribution",
+    "reason": "MIT attribution must preserve the upstream copyright text.",
+    "owner": "@agentsorchestrationcompany/interbase-release-operators",
+    "reviewRequired": true,
+    "retirementRule": "Retain while any OpenCode-derived source remains in the repository or release artifacts."
+  },
+  {
+    "path": "^(NOTICE|THIRD_PARTY_NOTICES\\.md|packages/cli/NOTICE|packages/cli/THIRD_PARTY_NOTICES\\.md|packages/cli-host/NOTICE|packages/cli/README\\.md|packages/cli-host/README\\.md|README\\.md|CONTRIBUTING\\.md)$",
+    "pattern": "OpenCode-derived|OpenCode",
+    "category": "legal_attribution",
+    "reason": "Public docs and package notices explicitly describe OpenCode-derived attribution.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire only if the repository no longer contains OpenCode-derived source."
+  },
+  {
+    "path": "^script/interbase/opencode-reference-allowlist\\.json$|^script/interbase/validate-opencode-references\\.mjs$|^script/interbase/validate-legal-artifacts\\.mjs$|^script/interbase/validate-ci-workflow\\.mjs$|^script/interbase/test/opencode-references\\.test\\.mjs$",
+    "pattern": "OpenCode|opencode|packages/cli-host|opencode\\.ai",
+    "category": "upstream_provenance",
+    "reason": "The validator and its allowlist intentionally encode reviewed OpenCode references and categories.",
+    "owner": "@agentsorchestrationcompany/interbase-release-operators",
+    "reviewRequired": true,
+    "retirementRule": "Retire only if the validator is removed or renamed away from the upstream terminology."
+  },
+  {
+    "path": "^\\.github/labels\\.yml$",
+    "pattern": "OpenCode",
+    "category": "upstream_sync",
+    "reason": "Governance metadata references OpenCode-derived attribution and upstream-candidate issue routing.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire if GitHub metadata no longer references upstream lineage or candidate routing."
+  },
+  {
+    "path": "^\\.github/CODEOWNERS$|^\\.github/workflows/public-ci\\.yml$|^package\\.json$|^README\\.md$|^CONTRIBUTING\\.md$|^packages/cli-overlay/src/index\\.ts$|^packages/cli-overlay/src/manifest\\.json$|^packages/cli-overlay/src/theme/interbase\\.json$|^packages/cli-host/BUN_SHELL_MIGRATION_PLAN\\.md$",
+    "pattern": "OpenCode|opencode|packages/cli-host|opencode\\.ai",
+    "category": "upstream_sync",
+    "reason": "Repository metadata, workspace scripts, overlay authority, and migration plans still reference the current host path or upstream schema URL.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Update or retire when the host directory rename and remaining schema migrations are complete."
+  },
+  {
+    "path": "^(AGENTS\\.md|packages/cli-host/AGENTS\\.md)$",
+    "pattern": "OpenCode|opencode",
+    "category": "source_header",
+    "reason": "Agent instructions preserve upstream attribution and the current host path during the split.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Revisit after the host directory rename and any AGENTS content refresh."
+  },
+  {
+    "path": "^packages/cli-host/(src|test)/.*/AGENTS\\.md$|^packages/cli-host/test/AGENTS\\.md$",
+    "pattern": "OpenCode|opencode|opencode-test-",
+    "category": "source_header",
+    "reason": "Nested AGENTS guides preserve upstream attribution and legacy fixture naming while the host split is in progress.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire or narrow after the host directory rename and fixture naming cleanup."
+  },
+  {
+    "path": "^packages/cli-host/package\\.json$|^packages/cli-host/src/plugin/internal-registry\\.ts$",
+    "pattern": "@gitlab/opencode-gitlab-auth|opencode-gitlab-auth|opencode-poe-auth",
+    "category": "dependency_name",
+    "reason": "Upstream package names must stay intact for dependency resolution.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire only when the dependency or import name changes upstream."
+  },
+  {
+    "path": "^packages/cli-host/src/cli/cmd/tui/context/theme\\.tsx$",
+    "pattern": "opencode\\.json|opencode:",
+    "category": "theme_asset",
+    "reason": "The built-in theme asset keeps its upstream file name for compatibility with the existing theme registry.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire if the theme asset is renamed and the theme registry is updated."
+  },
+  {
+    "path": "^packages/cli-host/src/cli/cmd/tui/context/theme/.*\\.json$",
+    "pattern": "https://opencode\\.ai/theme\\.json",
+    "category": "schema_url",
+    "reason": "Theme asset schema URLs still point at the upstream schema authority.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire when the theme schema URL moves to an Interbase-owned authority."
+  },
+  {
+    "path": "^packages/cli-host/src/(server/routes/instance/httpapi/public|server/server|server/routes/instance/httpapi/api)\\.ts$",
+    "pattern": "OpenCodeHttpApi",
+    "category": "upstream_compatibility",
+    "reason": "This internal API symbol remains upstream-shaped during the host split.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire when the internal HTTP API symbol is renamed without compatibility risk."
+  },
+  {
+    "path": "^packages/cli-host/src/(session/prompt|config/managed)\\.ts$",
+    "pattern": "OpenCode",
+    "category": "upstream_sync",
+    "reason": "Source comments describe upstream sync context or legacy config semantics.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire when those comments are no longer needed for sync or migration context."
+  },
+  {
+    "path": "^packages/cli-host/src/session/prompt/.*\\.txt$|^packages/cli-host/src/tool/lsp\\.txt$",
+    "pattern": "OpenCode|opencode|opencode\\.ai",
+    "category": "prompt_text",
+    "reason": "Prompt templates and tool guidance intentionally preserve upstream wording and docs URLs pending a separate prompt-branding pass.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire or narrow when prompt and tool templates adopt the Interbase wording contract."
+  },
+  {
+    "path": "^packages/cli-host/src/provider/models-snapshot\\.js$",
+    "pattern": "OpenCode|opencode",
+    "category": "generated_artifact",
+    "reason": "The committed provider snapshot may contain upstream-generated provider identifiers and URLs.",
+    "owner": "@agentsorchestrationcompany/interbase-release-operators",
+    "reviewRequired": true,
+    "retirementRule": "Regenerate and narrow when the snapshot no longer carries upstream naming fragments."
+  },
+  {
+    "path": "^packages/cli-host/specs/.*\\.(md|ts)$|^packages/cli-host/src/acp/README\\.md$|^packages/cli-host/src/control-plane/dev/README\\.md$|^packages/cli-host/src/command/template/initialize\\.txt$",
+    "pattern": "OpenCode|opencode|packages/cli-host|opencode\\.ai",
+    "category": "upstream_sync",
+    "reason": "Design specs, developer READMEs, and templates intentionally describe current upstream paths, legacy commands, and migration semantics.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire or narrow as the host split, docs, and templates stop referencing upstream names and paths."
+  },
+  {
+    "path": "^packages/cli-host/test/tool/fixtures/models-api\\.json$",
+    "pattern": "OpenCode|opencode|opencode\\.ai",
+    "category": "test_fixture",
+    "reason": "Fixture data intentionally preserves upstream provider and docs identifiers for regression coverage.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Retire or narrow when fixture coverage no longer depends on upstream identifiers."
+  },
+  {
+    "path": "^packages/sdk/openapi\\.json$|^packages/sdk/js/src/v2/gen/sdk\\.gen\\.ts$|^packages/sdk/js/src/gen/types\\.gen\\.ts$",
+    "pattern": "OpenCode|opencode",
+    "category": "generated_artifact",
+    "reason": "Generated SDK artifacts still contain upstream-generated naming and descriptions.",
+    "owner": "@agentsorchestrationcompany/interbase-release-operators",
+    "reviewRequired": true,
+    "retirementRule": "Regenerate and narrow the allowlist as the generated public contract adopts Interbase branding."
+  },
+  {
+    "path": "^packages/sdk/js/src/process\\.ts$|^packages/sdk/js/script/build\\.ts$|^packages/sdk/js/src/v2/client\\.ts$|^script/(raw-changelog|generate)\\.ts$|^script/interbase/(release-core|validate-package-identity|validate-public-boundary|scan-public-secrets|validate-isolated-public-checkout)\\.mjs$|^script/interbase/test/public-artifact-policy\\.test\\.mjs$",
+    "pattern": "OpenCode|opencode|packages/cli-host|opencode-dev",
+    "category": "upstream_compatibility",
+    "reason": "These scripts intentionally reference the current host path or legacy local binary naming.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Update or retire when the host directory rename completes."
+  },
+  {
+    "path": "^packages/cli-host/test/.*\\.ts$|^packages/core/test/effect/observability\\.test\\.ts$|^packages/cli-overlay/test/manifest\\.test\\.ts$",
+    "pattern": "OpenCode|opencode|packages/cli-host",
+    "category": "test_fixture",
+    "reason": "Tests intentionally exercise legacy names, host paths, and migration scenarios.",
+    "owner": "@agentsorchestrationcompany/interbase-maintainers",
+    "reviewRequired": true,
+    "retirementRule": "Narrow or remove once tests stop covering legacy names and current host paths."
+  }
+]

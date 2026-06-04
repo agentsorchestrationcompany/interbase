@@ -1,0 +1,27 @@
+{
+  "name": "@interbase/cli-goal-plugin",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tui-queue": "./src/tui-queue.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "coverage": "NODE_OPTIONS='--conditions=development' vitest run --config ../../vitest.config.ts --project cli-goal-plugin --coverage --coverage.include=src/index.ts --coverage.include=src/tui-queue.ts --coverage.include=src/goal-state.ts --coverage.thresholds.100 --coverage.thresholds.perFile",
+    "test": "NODE_OPTIONS='--conditions=development' vitest run --config ../../vitest.config.ts --project cli-goal-plugin",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@interbase/cli-local-state": "workspace:*",
+    "@interbase/runtime-protocol": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.4"
+  }
+}

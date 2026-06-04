@@ -1,0 +1,7 @@
+Interbase CLI package
+
+This package contains OpenCode-derived source and Interbase-owned public CLI extensions.
+
+Copyright in this package is held by Agents Orchestration Company, with preserved attribution for OpenCode-derived portions.
+
+OpenCode-derived code remains under the MIT license included in `LICENSE`.
