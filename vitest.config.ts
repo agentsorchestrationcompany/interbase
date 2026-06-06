@@ -22,6 +22,7 @@ export default defineConfig({
     pool: "forks",
     projects: [
       project("cli-goal-plugin", "packages/cli-goal-plugin", ["test/**/*.test.ts"]),
+      project("cli-computer-use-plugin", "packages/cli-computer-use-plugin", ["test/**/*.test.ts"]),
       project("cli-telemetry", "packages/cli-telemetry", ["test/**/*.test.ts"]),
       project("cli-model-switching", "packages/cli-model-switching", ["test/**/*.test.ts"]),
       project("runtime-protocol", "packages/runtime-protocol", ["test/**/*.test.ts"]),
