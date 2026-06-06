@@ -1,4 +1,7 @@
 import { describe, expect, test } from "bun:test"
+import { mkdtempSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import { PROTOCOL_MAJOR, encodeEnvelope, type DriverHealth, type DriverStatus, type IpcEnvelope } from "@interbase/computer-use-protocol"
 import { makeSanitizedMockObservation } from "@interbase/computer-use-testkit"
 import { createDefaultNativeHelperDriver, createNativeHelperDriver } from "@/computer-use/native-helper-driver"
@@ -68,6 +71,33 @@ describe("computer-use native helper driver factory", () => {
     })
     expect(result).toEqual({ available: false, reason: "helper_not_found" })
     expect(statusMenuCommands).toEqual([])
+  })
+
+  test("reuses an explicit helper request directory when the helper bundle is absent", async () => {
+    const commands: unknown[] = []
+    const requestDir = mkdtempSync(join(tmpdir(), "interbase-helper-rpc-existing-test-"))
+    const result = createNativeHelperDriver({
+      availability: { available: true, reason: "desktop_session_available" },
+      manifest,
+      discovery: { ...discovery, exists: () => false },
+      env: { INTERBASE_COMPUTER_USE_HELPER_REQUEST_DIR: requestDir },
+      connect: (command) => {
+        commands.push(command)
+        return connection()
+      },
+      nowMs: () => 1_000,
+    })
+    expect(result).toMatchObject({
+      available: true,
+      command: {
+        launchMethod: "existingPersistentFileRpc",
+        requestDir,
+        warnings: ["reused an already-running computer-use helper request directory"],
+      },
+    })
+    if (!result.available) throw new Error("expected driver")
+    expect(await result.driver.observe({ includeScreenshot: false }, { enabled: true })).toMatchObject({ id: "obs_mock_001" })
+    expect(commands).toHaveLength(1)
   })
 
   test("creates a supervised driver from availability, discovery, launch, and RPC", async () => {

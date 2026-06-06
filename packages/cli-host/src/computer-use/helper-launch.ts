@@ -7,7 +7,8 @@ export type HelperLaunchCommand = {
   env: Record<string, string>
   warnings: string[]
   appPath?: string
-  launchMethod?: "direct" | "launchServicesPersistentFileRpc"
+  requestDir?: string
+  launchMethod?: "direct" | "launchServicesPersistentFileRpc" | "existingPersistentFileRpc"
 }
 
 export type HelperStatusMenuLaunchCommand = {

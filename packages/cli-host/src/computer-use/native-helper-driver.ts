@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import { ComputerUseProtocolError, type DriverHealth } from "@interbase/computer-use-protocol"
 import type { DesktopAvailabilityDecision } from "@interbase/computer-use-policy"
 import type { ComputerUseDriver } from "@/computer-use/driver"
@@ -51,18 +52,40 @@ export function createNativeHelperDriver(input: NativeHelperDriverFactoryInput):
     env: input.env,
     discovery: input.discovery,
   })
-  if (!launch.allowed) return { available: false, reason: launch.reason }
+  if (!launch.allowed) {
+    const requestDir = launch.reason === "helper_not_found" ? explicitHelperRequestDir(input.env) : undefined
+    if (!requestDir) return { available: false, reason: launch.reason }
+    const command: HelperLaunchCommand = {
+      command: "",
+      args: [],
+      env: { INTERBASE_COMPUTER_USE_PROTOCOL_MAJOR: String(input.manifest.protocolMajor) },
+      warnings: ["reused an already-running computer-use helper request directory"],
+      requestDir,
+      launchMethod: "existingPersistentFileRpc",
+    }
+    return createAvailableHelperDriver({ ...input, command, launchReason: "untrusted_driver_allowed" })
+  }
 
+  return createAvailableHelperDriver({ ...input, command: launch.command, launchReason: launch.reason })
+}
+
+function createAvailableHelperDriver(input: NativeHelperDriverFactoryInput & { command: HelperLaunchCommand; launchReason: "verified" | "untrusted_driver_allowed" }): NativeHelperDriverFactoryResult {
   const launchStatusMenu = input.launchStatusMenu ?? launchHelperStatusMenu
-  launchStatusMenu(launch.command)
-  const rpc = createHelperRpcClient({ connection: input.connect(launch.command) })
+  launchStatusMenu(input.command)
+  const rpc = createHelperRpcClient({ connection: input.connect(input.command) })
   const driver = createHelperProcessDriver({
-    host: rpcSupervisorHost(rpc, launch.reason),
+    host: rpcSupervisorHost(rpc, input.launchReason),
     client: { observe: (request, config) => rpc.observe(request, config), act: (request) => rpc.act(request), artifact: (id) => rpc.artifact(id) },
     nowMs: input.nowMs,
     cleanupAfterCrash: input.cleanupAfterCrash,
   })
-  return { available: true, driver, command: launch.command }
+  return { available: true, driver, command: input.command }
+}
+
+function explicitHelperRequestDir(env: Record<string, string | undefined> | undefined) {
+  const explicit = env?.INTERBASE_COMPUTER_USE_HELPER_REQUEST_DIR?.trim()
+  if (explicit && existsSync(explicit)) return explicit
+  return undefined
 }
 
 function rpcSupervisorHost(rpc: HelperRpcClient, launchReason: "verified" | "untrusted_driver_allowed") {

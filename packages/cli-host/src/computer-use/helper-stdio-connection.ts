@@ -7,6 +7,7 @@ import type { HelperLaunchCommand } from "@/computer-use/helper-launch"
 import type { HelperRpcConnection } from "@/computer-use/helper-rpc-client"
 
 export function createHelperStdioConnection(command: HelperLaunchCommand, input: { timeoutMs?: number } = {}): HelperRpcConnection {
+  if (command.launchMethod === "existingPersistentFileRpc" && command.requestDir) return createPersistentFileConnection(command.requestDir, input, { cleanup: false })
   if (command.launchMethod === "launchServicesPersistentFileRpc" && command.appPath) return createPersistentLaunchServicesFileConnection(command, input)
   return createPersistentHelperStdioConnection(command, input)
 }
@@ -18,16 +19,11 @@ type PendingRequest = {
 }
 
 function createPersistentLaunchServicesFileConnection(command: HelperLaunchCommand, input: { timeoutMs?: number } = {}): HelperRpcConnection {
-  const timeoutMs = input.timeoutMs ?? 5_000
   const dir = mkdtempSync(join(tmpdir(), "interbase-helper-rpc-"))
   let started = false
-  let closed = false
-  let sequence = 0
-  let queue = Promise.resolve()
 
   function ensureStarted() {
     if (started) return
-    if (closed) throw new ComputerUseProtocolError("helper_unavailable", "helper connection is closed")
     const child = spawn(command.command, [...command.args, "-g", "-n", command.appPath!, "--args", "--request-dir", dir], {
       detached: true,
       env: { ...process.env, ...command.env },
@@ -37,8 +33,18 @@ function createPersistentLaunchServicesFileConnection(command: HelperLaunchComma
     started = true
   }
 
+  return createPersistentFileConnection(dir, input, { cleanup: true, beforeRequest: ensureStarted })
+}
+
+function createPersistentFileConnection(dir: string, input: { timeoutMs?: number } = {}, options: { cleanup: boolean; beforeRequest?: () => void }): HelperRpcConnection {
+  const timeoutMs = input.timeoutMs ?? 5_000
+  let closed = false
+  let sequence = 0
+  let queue = Promise.resolve()
+
   async function send(line: string) {
-    ensureStarted()
+    if (closed) throw new ComputerUseProtocolError("helper_unavailable", "helper connection is closed")
+    options.beforeRequest?.()
     const id = `${Date.now().toString(36)}_${++sequence}`
     const requestPath = join(dir, `${id}.request`)
     const pendingPath = join(dir, `${id}.request.tmp`)
@@ -70,7 +76,7 @@ function createPersistentLaunchServicesFileConnection(command: HelperLaunchComma
     },
     close: () => {
       closed = true
-      rmSync(dir, { recursive: true, force: true })
+      if (options.cleanup) rmSync(dir, { recursive: true, force: true })
     },
   }
 }

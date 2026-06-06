@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs"
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { createHelperStdioConnection } from "@/computer-use/helper-stdio-connection"
@@ -65,6 +65,23 @@ describe("computer-use helper stdio connection", () => {
     expect(second).toBe("second\n")
     expect(readFileSync(counterPath, "utf8").trim().split("\n")).toEqual(["started"])
     await connection.close?.()
+  })
+
+  test("reuses an existing persistent file RPC request directory without launching", async () => {
+    const requestDir = mkdtempSync(join(tmpdir(), "interbase-helper-existing-rpc-test-"))
+    const interval = setInterval(() => {
+      for (const name of readdirSync(requestDir).filter((item) => item.endsWith(".request"))) {
+        const requestPath = join(requestDir, name)
+        const responsePath = join(requestDir, name.replace(/\.request$/, ".response"))
+        const request = readFileSync(requestPath, "utf8")
+        rmSync(requestPath, { force: true })
+        writeFileSync(responsePath, request)
+      }
+    }, 5)
+    const connection = createHelperStdioConnection({ command: "", args: [], env: {}, warnings: [], requestDir, launchMethod: "existingPersistentFileRpc" }, { timeoutMs: 1_000 })
+    expect(await connection.request("existing\n")).toBe("existing\n")
+    await connection.close?.()
+    clearInterval(interval)
   })
 
   test("rejects persistent app file RPC requests on timeout", async () => {
