@@ -19,7 +19,7 @@ import { errorMessage } from "@/util/error"
 import { PluginLoader } from "./loader"
 import { parsePluginSpecifier, readPluginId, readV1Plugin, resolvePluginId } from "./shared"
 import { GlobalBus } from "@/bus/global"
-import { requiredInternalPlugins } from "./internal-registry"
+import { requiredInternalPlugins, type InternalPluginFactory, type InternalPluginServices } from "./internal-registry"
 
 const log = Log.create({ service: "plugin" })
 
@@ -123,8 +123,12 @@ export const layer = Layer.effect(
           $: typeof Bun === "undefined" ? undefined : Bun.$,
         }
 
+        const internalServices: InternalPluginServices = { bridge, config }
         for (const registration of requiredInternalPlugins()) {
-          const plugin = registration.plugin
+          if (Flag.INTERBASE_PURE && registration.id === "interbase-computer-use") continue
+          const plugin = typeof registration.plugin === "function" && registration.plugin.length >= 2
+            ? yield* Effect.promise(() => Promise.resolve((registration.plugin as InternalPluginFactory)(input, internalServices)))
+            : (registration.plugin as PluginInstance)
           log.info("loading internal plugin", { id: registration.id, name: plugin.name, source: registration.source })
           const init = yield* Effect.tryPromise({
             try: () => plugin(input),
@@ -247,6 +251,13 @@ export const layer = Layer.effect(
         return { hooks }
       }),
     )
+
+    const onConfigInvalidate = (event: { directory?: string; payload: any }) => {
+      if (event.payload?.type !== "config.invalidate" || !event.directory) return
+      void Effect.runPromise(InstanceState.invalidateDirectory(state, event.directory))
+    }
+    GlobalBus.on("event", onConfigInvalidate)
+    yield* Effect.addFinalizer(() => Effect.sync(() => GlobalBus.off("event", onConfigInvalidate)))
 
     const trigger = Effect.fn("Plugin.trigger")(function* <
       Name extends TriggerName,

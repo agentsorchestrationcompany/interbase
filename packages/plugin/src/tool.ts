@@ -4,6 +4,9 @@ import { Effect } from "effect"
 export type ToolContext = {
   sessionID: string
   messageID: string
+  callID?: string
+  providerID?: string
+  modelID?: string
   agent: string
   /**
    * Current project directory for this session.
@@ -22,8 +25,8 @@ export type ToolContext = {
 
 type AskInput = {
   permission: string
-  patterns: string[]
-  always: string[]
+  patterns: readonly string[]
+  always: readonly string[]
   metadata: { [key: string]: any }
 }
 

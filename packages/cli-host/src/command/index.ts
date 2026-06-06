@@ -57,6 +57,7 @@ export function hints(template: string) {
 
 export const Default = {
   REVIEW: "review",
+  COMPUTER: "computer",
 } as const
 
 export interface Interface {
@@ -87,6 +88,14 @@ export const layer = Layer.effect(
         },
         subtask: true,
         hints: hints(PROMPT_REVIEW),
+      }
+
+      commands[Default.COMPUTER] = {
+        name: Default.COMPUTER,
+        description: "configure computer use and desktop access",
+        source: "command",
+        template: "",
+        hints: [],
       }
 
       for (const [name, command] of Object.entries(cfg.command ?? {})) {

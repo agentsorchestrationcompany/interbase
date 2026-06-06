@@ -1,4 +1,4 @@
-import type { Plugin as PluginInstance } from "@interbase/plugin"
+import type { PluginInput, Plugin as PluginInstance } from "@interbase/plugin"
 import { isRequiredPlugin } from "@interbase/overlay"
 import { AzureAuthPlugin } from "./azure"
 import { CloudflareAIGatewayAuthPlugin, CloudflareWorkersAuthPlugin } from "./cloudflare"
@@ -7,10 +7,18 @@ import { CopilotAuthPlugin } from "./github-copilot/copilot"
 import { gitlabAuthPlugin as GitlabAuthPlugin } from "opencode-gitlab-auth"
 import { providerCatalogServerPlugin as InterbaseProviderCatalogPlugin } from "@interbase/plugin-provider-catalog"
 import { interbaseGoalPlugin as InterbaseGoalPlugin } from "./interbase-goal"
+import { createComputerUseInternalPlugin, type ComputerUseInternalPluginServices } from "./computer-use"
+
+export type InternalPluginServices = ComputerUseInternalPluginServices
+
+export type InternalPluginFactory = (
+  input: PluginInput,
+  services: InternalPluginServices,
+) => PluginInstance | Promise<PluginInstance>
 
 export type InternalPluginRegistration = {
   readonly id: string
-  readonly plugin: PluginInstance
+  readonly plugin: PluginInstance | InternalPluginFactory
   readonly required: boolean
   readonly source: "overlay" | "upstream"
 }
@@ -32,6 +40,12 @@ export const INTERNAL_PLUGIN_REGISTRY: readonly InternalPluginRegistration[] = [
     id: "interbase-goal",
     plugin: InterbaseGoalPlugin as PluginInstance,
     required: isRequiredPlugin("interbase-goal"),
+    source: "overlay",
+  },
+  {
+    id: "interbase-computer-use",
+    plugin: createComputerUseInternalPlugin,
+    required: true,
     source: "overlay",
   },
 ]

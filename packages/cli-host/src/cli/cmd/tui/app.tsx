@@ -67,6 +67,7 @@ import { INTERBASE_THEME_SCHEME } from "@interbase/overlay"
 
 import type { EventSource } from "./context/sdk"
 import { DialogVariant } from "./component/dialog-variant"
+import { DialogComputerUse } from "./component/dialog-computer-use"
 
 function rendererConfig(_config: TuiConfig.Info): CliRendererConfig {
   const mouseEnabled = !Flag.INTERBASE_DISABLE_MOUSE && (_config.mouse ?? true)
@@ -529,6 +530,17 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
       },
       onSelect: () => {
         dialog.replace(() => <DialogModel />)
+      },
+    },
+    {
+      title: "Computer use",
+      value: "computer.use",
+      category: "Agent",
+      slash: {
+        name: "computer",
+      },
+      onSelect: () => {
+        dialog.replace(() => <DialogComputerUse />)
       },
     },
     {

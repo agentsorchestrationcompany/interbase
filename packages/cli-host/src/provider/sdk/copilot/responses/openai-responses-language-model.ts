@@ -30,6 +30,13 @@ import type { OpenAIResponsesIncludeOptions, OpenAIResponsesIncludeValue } from 
 import { prepareResponsesTools } from "./openai-responses-prepare-tools"
 import type { OpenAIResponsesModelId } from "./openai-responses-settings"
 import { localShellInputSchema } from "./tool/local-shell"
+import {
+  computerUseToolCall,
+  computerUseToolInputEnd,
+  computerUseToolInputStart,
+  computerUseToolName,
+  computerUseToolResult,
+} from "./computer-use-adapter"
 
 const webSearchCallItem = z.object({
   type: z.literal("web_search_call"),
@@ -650,23 +657,8 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
         }
 
         case "computer_call": {
-          content.push({
-            type: "tool-call",
-            toolCallId: part.id,
-            toolName: "computer_use",
-            input: "",
-            providerExecuted: true,
-          })
-
-          content.push({
-            type: "tool-result",
-            toolCallId: part.id,
-            toolName: "computer_use",
-            result: {
-              type: "computer_use_tool_result",
-              status: part.status || "completed",
-            },
-          })
+          content.push(computerUseToolCall(part))
+          content.push(computerUseToolResult(part))
           break
         }
 
@@ -901,15 +893,11 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                 })
               } else if (value.item.type === "computer_call") {
                 ongoingToolCalls[value.output_index] = {
-                  toolName: "computer_use",
+                  toolName: computerUseToolName,
                   toolCallId: value.item.id,
                 }
 
-                controller.enqueue({
-                  type: "tool-input-start",
-                  id: value.item.id,
-                  toolName: "computer_use",
-                })
+                controller.enqueue(computerUseToolInputStart(value.item))
               } else if (value.item.type === "code_interpreter_call") {
                 ongoingToolCalls[value.output_index] = {
                   toolName: "code_interpreter",
@@ -1023,28 +1011,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
               } else if (value.item.type === "computer_call") {
                 ongoingToolCalls[value.output_index] = undefined
 
-                controller.enqueue({
-                  type: "tool-input-end",
-                  id: value.item.id,
-                })
-
-                controller.enqueue({
-                  type: "tool-call",
-                  toolCallId: value.item.id,
-                  toolName: "computer_use",
-                  input: "",
-                  providerExecuted: true,
-                })
-
-                controller.enqueue({
-                  type: "tool-result",
-                  toolCallId: value.item.id,
-                  toolName: "computer_use",
-                  result: {
-                    type: "computer_use_tool_result",
-                    status: value.item.status || "completed",
-                  },
-                })
+                controller.enqueue(computerUseToolInputEnd(value.item))
+                controller.enqueue(computerUseToolCall(value.item))
+                controller.enqueue(computerUseToolResult(value.item))
               } else if (value.item.type === "file_search_call") {
                 ongoingToolCalls[value.output_index] = undefined
 

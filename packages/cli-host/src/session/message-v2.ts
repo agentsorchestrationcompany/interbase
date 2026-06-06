@@ -707,11 +707,11 @@ const part = (row: typeof PartTable.$inferSelect) =>
 const older = (row: Cursor) =>
   or(lt(MessageTable.time_created, row.time), and(eq(MessageTable.time_created, row.time), lt(MessageTable.id, row.id)))
 
-function hydrate(rows: (typeof MessageTable.$inferSelect)[]) {
+function hydrate(rows: (typeof MessageTable.$inferSelect)[], dbPath = Database.Path) {
   const ids = rows.map((row) => row.id)
   const partByMessage = new Map<string, Part[]>()
   if (ids.length > 0) {
-    const partRows = Database.use((db) =>
+    const partRows = Database.usePath(dbPath, (db) =>
       db
         .select()
         .from(PartTable)
@@ -1055,7 +1055,7 @@ export function page(input: { sessionID: SessionID; limit: number; before?: stri
 
   const more = rows.length > input.limit
   const slice = more ? rows.slice(0, input.limit) : rows
-  const items = hydrate(slice)
+  const items = hydrate(slice, dbPath)
   items.reverse()
   const tail = slice.at(-1)
   return {
