@@ -17,7 +17,7 @@ import { createStore, produce, unwrap } from "solid-js/store"
 import { useKeybind } from "@tui/context/keybind"
 import { usePromptHistory, type PromptInfo } from "./history"
 import { computePromptTraits } from "./traits"
-import { assign } from "./part"
+import { assign, reconcileVirtualParts } from "./part"
 import { usePromptStash } from "./stash"
 import { DialogStash } from "../dialog-stash"
 import { type AutocompleteRef, Autocomplete } from "./autocomplete"
@@ -1252,6 +1252,12 @@ export function Prompt(props: PromptProps) {
                 setStore("prompt", "input", value)
                 autocomplete.onInput(value)
                 syncExtmarksWithPromptParts()
+
+                const parts = reconcileVirtualParts(unwrap(store.prompt).parts, value)
+                if (parts.length !== store.prompt.parts.length) {
+                  setStore("prompt", { input: value, parts })
+                  restoreExtmarksFromParts(parts)
+                }
               }}
               keyBindings={textareaKeybindings()}
               onKeyDown={async (e) => {

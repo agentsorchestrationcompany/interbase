@@ -743,3 +743,31 @@ index baab4070f..ff0b339ea 100644
      setCursorPosition: (x: number, y: number, visible: boolean) => void;
      setCursorStyle: (options: CursorStyleOptions) => void;
      setCursorColor: (color: RGBA) => void;
+diff --git a/index-jv9g79dk.js b/index-jv9g79dk.js
+--- a/index-jv9g79dk.js
++++ b/index-jv9g79dk.js
+@@ -20770,6 +20770,23 @@ class EditBufferRenderable extends Renderable {
+       return true;
+     }
+     const currentCursor = this.editBuffer.getCursorPosition();
++    const text = this.editBuffer.getText();
++    let targetOffset = currentCursor.offset;
++    while (targetOffset > 0 && /\s/.test(text[targetOffset - 1] ?? "")) {
++      targetOffset--;
++    }
++    const virtualExtmark = this.editorView.extmarks.getAll().find((extmark) => extmark.virtual && targetOffset >= extmark.start && targetOffset <= extmark.end);
++    if (virtualExtmark) {
++      this.cursorOffset = virtualExtmark.start;
++      const startCursor = this.logicalCursor;
++      this.cursorOffset = currentCursor.offset;
++      const endCursor = this.logicalCursor;
++      this.editorView.extmarks.delete(virtualExtmark.id);
++      this.editBuffer.deleteRange(startCursor.row, startCursor.col, endCursor.row, endCursor.col);
++      this.cursorOffset = virtualExtmark.start;
++      this._ctx.clearSelection();
++      this.requestRender();
++      return true;
++    }
+     const prevWord = this.editBuffer.getPrevWordBoundary();
+     if (prevWord.offset < currentCursor.offset) {
+       this.editBuffer.deleteRange(prevWord.row, prevWord.col, currentCursor.row, currentCursor.col);
