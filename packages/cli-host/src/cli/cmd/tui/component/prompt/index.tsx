@@ -17,7 +17,7 @@ import { createStore, produce, unwrap } from "solid-js/store"
 import { useKeybind } from "@tui/context/keybind"
 import { usePromptHistory, type PromptInfo } from "./history"
 import { computePromptTraits } from "./traits"
-import { assign, reconcileVirtualParts } from "./part"
+import { assign, buildVirtualTokenInsertion, reconcileVirtualParts } from "./part"
 import { usePromptStash } from "./stash"
 import { DialogStash } from "../dialog-stash"
 import { type AutocompleteRef, Autocomplete } from "./autocomplete"
@@ -1057,10 +1057,13 @@ export function Prompt(props: PromptProps) {
 
   function pasteText(text: string, virtualText: string) {
     const currentOffset = input.visualCursor.offset
-    const extmarkStart = currentOffset
-    const extmarkEnd = extmarkStart + virtualText.length
+    const { textToInsert, extmarkStart, extmarkEnd } = buildVirtualTokenInsertion({
+      prompt: input.plainText,
+      cursorOffset: currentOffset,
+      virtualText,
+    })
 
-    input.insertText(virtualText + " ")
+    input.insertText(textToInsert)
 
     const extmarkId = input.extmarks.create({
       start: extmarkStart,
@@ -1091,7 +1094,6 @@ export function Prompt(props: PromptProps) {
 
   async function pasteAttachment(file: { filename?: string; filepath?: string; content: string; mime: string }) {
     const currentOffset = input.visualCursor.offset
-    const extmarkStart = currentOffset
     const pdf = file.mime === "application/pdf"
     const count = store.prompt.parts.filter((x) => {
       if (x.type !== "file") return false
@@ -1099,8 +1101,11 @@ export function Prompt(props: PromptProps) {
       return x.mime.startsWith("image/")
     }).length
     const virtualText = pdf ? `[PDF ${count + 1}]` : `[Image ${count + 1}]`
-    const extmarkEnd = extmarkStart + virtualText.length
-    const textToInsert = virtualText + " "
+    const { textToInsert, extmarkStart, extmarkEnd } = buildVirtualTokenInsertion({
+      prompt: input.plainText,
+      cursorOffset: currentOffset,
+      virtualText,
+    })
 
     input.insertText(textToInsert)
 

@@ -2,7 +2,12 @@ import { describe, expect, test } from "bun:test"
 import { TextareaRenderable } from "@opentui/core"
 import { EventEmitter } from "node:events"
 import type { PromptInfo } from "../../../../src/cli/cmd/tui/component/prompt/history"
-import { assign, reconcileVirtualParts, strip } from "../../../../src/cli/cmd/tui/component/prompt/part"
+import {
+  assign,
+  buildVirtualTokenInsertion,
+  reconcileVirtualParts,
+  strip,
+} from "../../../../src/cli/cmd/tui/component/prompt/part"
 
 function testRenderContext() {
   return Object.assign(new EventEmitter(), {
@@ -147,4 +152,37 @@ describe("prompt part", () => {
     }
   })
 
+  test("buildVirtualTokenInsertion pads virtual placeholders away from adjacent text", () => {
+    expect(buildVirtualTokenInsertion({ prompt: "foo", cursorOffset: 3, virtualText: "[Pasted ~4 lines]" })).toEqual({
+      textToInsert: " [Pasted ~4 lines] ",
+      extmarkStart: 4,
+      extmarkEnd: 21,
+    })
+    expect(buildVirtualTokenInsertion({ prompt: "foo bar", cursorOffset: 3, virtualText: "[Pasted ~4 lines]" })).toEqual({
+      textToInsert: " [Pasted ~4 lines]",
+      extmarkStart: 4,
+      extmarkEnd: 21,
+    })
+  })
+
+  test("cursor navigation lands after the preceding character for spaced virtual placeholders", () => {
+    const textarea = new TextareaRenderable(testRenderContext() as any, { id: "test", width: 80, height: 5 })
+    const virtualText = "[Pasted ~4 lines]"
+    const typeId = textarea.extmarks.registerType("prompt-part")
+    const insertion = buildVirtualTokenInsertion({ prompt: "foo", cursorOffset: 3, virtualText })
+
+    textarea.setText("foo" + insertion.textToInsert)
+    textarea.extmarks.create({
+      start: insertion.extmarkStart,
+      end: insertion.extmarkEnd,
+      virtual: true,
+      typeId,
+    })
+    textarea.cursorOffset = textarea.plainText.length
+
+    textarea.handleKeyPress({ name: "left", ctrl: false, meta: false, shift: false, super: false, hyper: false } as any)
+    textarea.handleKeyPress({ name: "left", ctrl: false, meta: false, shift: false, super: false, hyper: false } as any)
+
+    expect(textarea.cursorOffset).toBe(3)
+  })
 })
