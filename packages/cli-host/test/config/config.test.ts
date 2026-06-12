@@ -1628,6 +1628,10 @@ test("Effect config parser preserves permission order while rejecting unknown to
   const config = ConfigParse.effectSchema(
     Config.Info,
     {
+      computer_use: {
+        enabled: true,
+        backend: "native",
+      },
       permission: {
         bash: "allow",
         "*": "deny",
@@ -1638,6 +1642,7 @@ test("Effect config parser preserves permission order while rejecting unknown to
   )
 
   expect(Object.keys(config.permission!)).toEqual(["bash", "*", "edit"])
+  expect(config.computer_use).toEqual({ enabled: true, backend: "native" })
   try {
     ConfigParse.effectSchema(Config.Info, { invalid_field: true }, "test")
     throw new Error("expected config parse to fail")
