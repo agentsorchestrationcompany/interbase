@@ -21,6 +21,21 @@ export function assign(part: Item): Item & { id: PartID } {
   }
 }
 
+export function buildVirtualTokenInsertion(input: { prompt: string; cursorOffset: number; virtualText: string }) {
+  const charBefore = input.cursorOffset > 0 ? input.prompt.at(input.cursorOffset - 1) : undefined
+  const charAfter = input.prompt.at(input.cursorOffset)
+  const prefix = charBefore && !/\s/.test(charBefore) ? " " : ""
+  const suffix = charAfter === undefined || !/\s/.test(charAfter) ? " " : ""
+  const extmarkStart = input.cursorOffset + prefix.length
+  const extmarkEnd = extmarkStart + input.virtualText.length
+
+  return {
+    textToInsert: prefix + input.virtualText + suffix,
+    extmarkStart,
+    extmarkEnd,
+  }
+}
+
 export function reconcileVirtualParts(parts: Item[], input: string): Item[] {
   return parts.filter((part) => {
     const source = virtualSource(part)
