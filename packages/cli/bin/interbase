@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process'
-const target = "/Users/rk/Developer/agentsorchestrationcompany/interbase/packages/cli-host/bin/interbase"
-const result = spawnSync(target, process.argv.slice(2), { stdio: 'inherit' })
+const target = "/Users/rk/Developer/agentsorchestrationcompany/interbase-computer-use/packages/cli-host/bin/interbase"
+const env = { ...process.env, ...{"INTERBASE_COMPUTER_USE_HELPER_PATH":"/Users/rk/Developer/agentsorchestrationcompany/interbase-computer-use/native/macos/InterbaseComputerUseHelper.app","INTERBASE_COMPUTER_USE_ALLOW_UNTRUSTED_DRIVER":"1"} }
+const result = spawnSync(target, process.argv.slice(2), { stdio: 'inherit', env })
 if (result.error) {
   console.error(result.error.message)
   process.exit(1)

@@ -37,9 +37,11 @@ import { ConfigProvider } from "./provider"
 import { ConfigServer } from "./server"
 import { ConfigSkills } from "./skills"
 import { ConfigVariable } from "./variable"
+import { ConfigComputerUse } from "./computer-use"
 import { Npm } from "@interbase/core/npm"
 import { InvalidError, JsonError } from "./error"
 import { currentInterbaseRuntimeContext, interbaseRuntimeContext } from "@/interbase-runtime-context"
+import { GlobalBus } from "@/bus/global"
 
 const log = Log.create({ service: "config" })
 
@@ -218,6 +220,9 @@ export const Info = Schema.Struct({
   ).annotate({
     description:
       "Thresholds for truncating tool output. When output exceeds either limit, the full text is written to the truncation directory and a preview is returned.",
+  }),
+  computer_use: Schema.optional(ConfigComputerUse.Info).annotate({
+    description: "Computer-use configuration. Tools are enabled by default; native automation requires a verified backend.",
   }),
   compaction: Schema.optional(
     Schema.Struct({
@@ -573,7 +578,11 @@ export const layer = Layer.effect(
 
         for (const dir of directories) {
           if (dir.endsWith(".interbase") || dir === runtimeConfigDirectory) {
-            for (const file of ["interbase.json", "interbase.jsonc"]) {
+            const files =
+              dir === runtimeConfigDirectory
+                ? ["config.json", "interbase.json", "interbase.jsonc"]
+                : ["interbase.json", "interbase.jsonc"]
+            for (const file of files) {
               const source = path.join(dir, file)
               log.debug(`loading config from ${source}`)
               yield* merge(source, yield* loadFile(source))
@@ -731,6 +740,9 @@ export const layer = Layer.effect(
 
     const invalidate = Effect.fn("Config.invalidate")(function* () {
       yield* invalidateGlobal
+      yield* InstanceState.invalidate(state)
+      const ctx = yield* InstanceState.context
+      GlobalBus.emit("event", { directory: ctx.directory, project: ctx.project.id, payload: { type: "config.invalidate" } })
     })
 
     const updateGlobal = Effect.fn("Config.updateGlobal")(function* (config: Info) {

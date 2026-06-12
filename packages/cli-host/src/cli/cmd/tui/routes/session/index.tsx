@@ -96,6 +96,11 @@ import { SessionRetry } from "@/session/retry"
 import { getRevertDiffFiles } from "../../util/revert-diff"
 import { shouldRenderSessionPrompt, shouldShowSessionPrompt } from "./prompt-visibility"
 import { Process } from "@/util/process"
+import {
+  DialogComputerUsePermissions,
+  missingComputerUsePermissionReason,
+  startComputerUsePermissionGuide,
+} from "../../component/dialog-computer-use-permissions"
 
 addDefaultParsers(parsers.parsers)
 
@@ -1888,9 +1893,11 @@ function TextPart(props: { last: boolean; part: TextPart; message: AssistantMess
 function ToolPart(props: { last: boolean; part: ToolPart; message: AssistantMessage }) {
   const ctx = use()
   const sync = useSync()
+  const computerUsePermission = createMemo(() => computerUseMissingPermission(props.part))
 
   // Hide tool if showDetails is false and tool completed successfully
   const shouldHide = createMemo(() => {
+    if (computerUsePermission()) return false
     if (ctx.showDetails()) return false
     if (props.part.state.status !== "completed") return false
     return true
@@ -1961,6 +1968,9 @@ function ToolPart(props: { last: boolean; part: ToolPart; message: AssistantMess
         <Match when={props.part.tool === "skill"}>
           <Skill {...toolprops} />
         </Match>
+        <Match when={computerUsePermission()}>
+          {(permission) => <ComputerUsePermissionTool {...toolprops} computerPermission={permission()} />}
+        </Match>
         <Match when={true}>
           <GenericTool {...toolprops} />
         </Match>
@@ -1977,6 +1987,47 @@ type ToolProps<T> = {
   output?: string
   part: ToolPart
 }
+
+function ComputerUsePermissionTool(props: ToolProps<any> & { computerPermission: "accessibility" | "screenRecording" }) {
+  const ctx = use()
+  const dialog = useDialog()
+  const renderer = useRenderer()
+  const { theme } = useTheme()
+  const label = props.computerPermission === "accessibility" ? "Accessibility" : "Screen Recording"
+  const frame = createMemo(() =>
+    renderGoalFrame(
+      "Computer use permission required",
+      `Grant macOS ${label}. Click for guided setup.`,
+      ctx.width,
+    ),
+  )
+
+  return (
+    <box
+      paddingLeft={3}
+      marginTop={1}
+      flexShrink={0}
+      onMouseUp={() => {
+        if (renderer.getSelection()?.getSelectedText()) return
+        dialog.replace(() => <DialogComputerUsePermissions permission={props.computerPermission} />)
+      }}
+    >
+      <text fg={theme.primary}>{frame()}</text>
+    </box>
+  )
+}
+
+function computerUseMissingPermission(part: ToolPart) {
+  if (!isComputerUseTool(part.tool)) return undefined
+  if (part.state.status !== "completed") return undefined
+  const metadataReason = isRecord(part.state.metadata) ? part.state.metadata.reason : undefined
+  return missingComputerUsePermissionReason(metadataReason) ?? missingComputerUsePermissionReason(part.state.output?.trim())
+}
+
+function isComputerUseTool(tool: string) {
+  return tool === "computer_observe" || tool === "computer_act" || tool === "computer_wait_for" || tool === "computer.observe" || tool === "computer.act" || tool === "computer.waitFor"
+}
+
 function GenericTool(props: ToolProps<any>) {
   const { theme } = useTheme()
   const ctx = use()

@@ -1,17 +1,21 @@
 import { describe, expect, test } from "bun:test"
+import { rmSync } from "fs"
 import path from "path"
+import { Global } from "@interbase/core/global"
 import { Session as SessionNs } from "@/session/session"
 import { Bus } from "../../src/bus"
 import * as Log from "@interbase/core/util/log"
 import { Instance } from "../../src/project/instance"
 import { WithInstance } from "../../src/project/with-instance"
 import { MessageV2 } from "../../src/session/message-v2"
-import { MessageID, PartID, type SessionID } from "../../src/session/schema"
+import { MessageID, PartID, SessionID, type SessionID as SessionIDType } from "../../src/session/schema"
 import { ModelID, ProviderID } from "../../src/provider/schema"
 import { AppRuntime } from "../../src/effect/app-runtime"
 import { tmpdir } from "../fixture/fixture"
-import { SessionMessageTable } from "../../src/session/session.sql"
+import { MessageTable, PartTable, SessionMessageTable, SessionTable } from "../../src/session/session.sql"
 import * as Database from "../../src/storage/db"
+import { ProjectID } from "../../src/project/schema"
+import { ProjectTable } from "../../src/project/project.sql"
 
 const projectRoot = path.join(__dirname, "../..")
 void Log.init({ print: false })
@@ -20,11 +24,11 @@ function create(input?: SessionNs.CreateInput) {
   return AppRuntime.runPromise(SessionNs.Service.use((svc) => svc.create(input)))
 }
 
-function get(id: SessionID) {
+function get(id: SessionIDType) {
   return AppRuntime.runPromise(SessionNs.Service.use((svc) => svc.get(id)))
 }
 
-function remove(id: SessionID) {
+function remove(id: SessionIDType) {
   return AppRuntime.runPromise(SessionNs.Service.use((svc) => svc.remove(id)))
 }
 
@@ -261,6 +265,101 @@ describe("step-finish token propagation via Bus event", () => {
 })
 
 describe("Session", () => {
+  test("messages hydrate parts from resolved session database", async () => {
+    const dbPath = path.join(Global.Path.data, `interbase-session-hydrate-${Date.now()}.db`)
+    rmSync(dbPath, { force: true })
+
+    const now = Date.now()
+    const projectID = ProjectID.make("proj_session_hydrate")
+    const sessionID = SessionID.descending()
+    const messageID = MessageID.ascending()
+    const partID = PartID.ascending()
+
+    try {
+      Database.transactionPath(dbPath, (db) => {
+        db.insert(ProjectTable)
+          .values({
+            id: projectID,
+            worktree: "/tmp",
+            vcs: "git",
+            name: null,
+            icon_url: null,
+            icon_url_override: null,
+            icon_color: null,
+            time_created: now,
+            time_updated: now,
+            time_initialized: null,
+            sandboxes: [],
+            commands: null,
+          })
+          .run()
+        db.insert(SessionTable)
+          .values({
+            id: sessionID,
+            project_id: projectID,
+            parent_id: null,
+            slug: "legacy",
+            directory: "/tmp",
+            path: null,
+            title: "legacy session",
+            version: "test",
+            share_url: null,
+            summary_additions: null,
+            summary_deletions: null,
+            summary_files: null,
+            summary_diffs: null,
+            revert: null,
+            permission: null,
+            agent: null,
+            model: null,
+            time_created: now,
+            time_updated: now,
+            time_compacting: null,
+            time_archived: null,
+          })
+          .run()
+        db.insert(MessageTable)
+          .values({
+            id: messageID,
+            session_id: sessionID,
+            time_created: now,
+            time_updated: now,
+            data: {
+              role: "user",
+              time: { created: now },
+              agent: "test",
+              model: { providerID: "test", modelID: "test" },
+              tools: {},
+              mode: "",
+            } as unknown as Omit<MessageV2.Info, "id" | "sessionID">,
+          })
+          .run()
+        db.insert(PartTable)
+          .values({
+            id: partID,
+            message_id: messageID,
+            session_id: sessionID,
+            time_created: now,
+            time_updated: now,
+            data: { type: "text", text: "loaded from alternate database" } as unknown as Omit<
+              MessageV2.TextPart,
+              "id" | "sessionID" | "messageID"
+            >,
+          })
+          .run()
+      })
+
+      const history = await messages({ sessionID })
+      expect(history).toHaveLength(1)
+      expect(history[0]?.parts).toMatchObject([{ type: "text", text: "loaded from alternate database" }])
+    } finally {
+      Database.close(dbPath)
+      rmSync(dbPath, { force: true })
+      rmSync(`${dbPath}-shm`, { force: true })
+      rmSync(`${dbPath}-wal`, { force: true })
+    }
+  })
+
   test("remove works without an instance", async () => {
     await using tmp = await tmpdir({ git: true })
 

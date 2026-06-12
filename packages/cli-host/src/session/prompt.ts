@@ -86,6 +86,19 @@ IMPORTANT:
 
 const STRUCTURED_OUTPUT_SYSTEM_PROMPT = `IMPORTANT: The user has requested structured output. You MUST use the StructuredOutput tool to provide your final response. Do NOT respond with plain text - you MUST call the StructuredOutput tool with your answer formatted according to the schema.`
 
+const COMPUTER_MENTION_SYSTEM_PROMPT = `The user explicitly mentioned @computer. Use computer_observe first to inspect the current desktop state, then use computer_act for one desktop action at a time and computer_wait_for when waiting for UI changes. Respect all computer_use policy, permission prompts, and tool denial results.`
+const COMPUTER_TOOL_IDS = ["computer_observe", "computer_act", "computer_wait_for"] as const
+
+function hasComputerMention(messages: MessageV2.WithParts[], user: MessageV2.User) {
+  const userMessage = messages.find((message) => message.info.id === user.id)
+  if (!userMessage) return false
+  return userMessage.parts.some((part) => part.type === "text" && !part.synthetic && /(^|[^\w-])@computer(?![\w-])/i.test(part.text))
+}
+
+function hasComputerUseTools(tools: Record<string, AITool>) {
+  return COMPUTER_TOOL_IDS.every((id) => id in tools)
+}
+
 const log = Log.create({ service: "session.prompt" })
 const elog = EffectLogger.create({ service: "session.prompt" })
 
@@ -398,6 +411,8 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         abort: options.abortSignal!,
         messageID: input.processor.message.id,
         callID: options.toolCallId,
+        providerID: input.model.providerID,
+        modelID: input.model.api.id,
         extra: { model: input.model, bypassAgentCheck: input.bypassAgentCheck, promptOps },
         agent: input.agent.name,
         messages: input.messages,
@@ -1731,6 +1746,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               MessageV2.toModelMessagesEffect(msgs, model, { targetVariant: lastUser.model.variant }),
             ])
             const system = [...env, ...instructions, ...(skills ? [skills] : [])]
+            if (hasComputerMention(msgs, lastUser) && hasComputerUseTools(tools)) system.push(COMPUTER_MENTION_SYSTEM_PROMPT)
             const format = lastUser.format ?? { type: "text" as const }
             if (format.type === "json_schema") system.push(STRUCTURED_OUTPUT_SYSTEM_PROMPT)
             const result = yield* handle.process({
@@ -1968,6 +1984,33 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           pendingIdleContinuations.add(input.sessionID)
           yield* loop({ sessionID: input.sessionID }).pipe(Effect.ignore, Effect.forkIn(scope))
         }
+        return result
+      }
+      if (input.command === Command.Default.COMPUTER) {
+        const message = "Computer use is unavailable in this runtime."
+        const hint = "If INTERBASE_PURE=1 is set, unset it and restart the CLI, then run /computer again."
+        const result = yield* prompt({
+          sessionID: input.sessionID,
+          messageID: input.messageID,
+          model: input.model ? Provider.parseModel(input.model) : undefined,
+          agent: input.agent,
+          parts: [
+            {
+              type: "text",
+              text: [message, hint].join("\n"),
+              synthetic: true,
+              metadata: { kind: "interbase_command_result", title: message, detail: hint },
+            },
+          ],
+          noReply: true,
+          variant: input.variant,
+        })
+        yield* bus.publish(Command.Event.Executed, {
+          name: input.command,
+          sessionID: input.sessionID,
+          arguments: input.arguments,
+          messageID: result.info.id,
+        })
         return result
       }
       const cmd = yield* commands.get(input.command)

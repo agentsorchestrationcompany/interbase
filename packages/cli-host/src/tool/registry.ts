@@ -46,6 +46,7 @@ import { Bus } from "../bus"
 import { Agent } from "../agent/agent"
 import { Skill } from "../skill"
 import { Permission } from "@/permission"
+import { GlobalBus } from "@/bus/global"
 
 const log = Log.create({ service: "tool.registry" })
 
@@ -135,7 +136,16 @@ export const layer: Layer.Layer<
             execute: (args, toolCtx) =>
               Effect.gen(function* () {
                 const pluginCtx: PluginToolContext = {
-                  ...toolCtx,
+                  sessionID: toolCtx.sessionID,
+                  messageID: toolCtx.messageID,
+                  callID: toolCtx.callID,
+                  providerID: toolCtx.providerID,
+                  modelID: toolCtx.modelID,
+                  agent: toolCtx.agent,
+                  abort: toolCtx.abort,
+                  metadata: (input) => {
+                    void Effect.runPromise(toolCtx.metadata(input))
+                  },
                   ask: (req) => toolCtx.ask(req),
                   directory: ctx.directory,
                   worktree: ctx.worktree,
@@ -237,6 +247,13 @@ export const layer: Layer.Layer<
         }
       }),
     )
+
+    const onGlobalEvent = (event: { directory?: string; payload: any }) => {
+      if (event.payload?.type !== "config.invalidate" || !event.directory) return
+      void Effect.runPromise(InstanceState.invalidateDirectory(state, event.directory))
+    }
+    GlobalBus.on("event", onGlobalEvent)
+    yield* Effect.addFinalizer(() => Effect.sync(() => GlobalBus.off("event", onGlobalEvent)))
 
     const all: Interface["all"] = Effect.fn("ToolRegistry.all")(function* () {
       const s = yield* InstanceState.get(state)
