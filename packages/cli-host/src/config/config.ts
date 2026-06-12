@@ -91,6 +91,18 @@ const LogLevelRef = Schema.Literals(["DEBUG", "INFO", "WARN", "ERROR"]).annotate
   description: "Log level",
 })
 
+const ComputerUse = Schema.Struct({
+  enabled: Schema.optional(Schema.Boolean).annotate({
+    description: "Enable computer use tools for providers that support them",
+  }),
+  backend: Schema.optional(Schema.Literal("native")).annotate({
+    description: "Computer use backend implementation",
+  }),
+}).annotate({
+  identifier: "ComputerUseConfig",
+  description: "Computer use tool configuration",
+})
+
 // The Effect Schema is the canonical source of truth. The `.zod` compatibility
 // surface is derived so existing Hono validators keep working without a parallel
 // Zod definition.
@@ -201,6 +213,7 @@ export const Info = Schema.Struct({
   layout: Schema.optional(ConfigLayout.Layout).annotate({ description: "@deprecated Always uses stretch layout." }),
   permission: Schema.optional(ConfigPermission.Info),
   tools: Schema.optional(Schema.Record(Schema.String, Schema.Boolean)),
+  computer_use: Schema.optional(ComputerUse),
   enterprise: Schema.optional(
     Schema.Struct({
       url: Schema.optional(Schema.String).annotate({ description: "Enterprise URL" }),
