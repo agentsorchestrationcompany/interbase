@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test"
 import {
   matchesExactSlashArgumentAlias,
   slashAutocompleteInsertionText,
-} from "../../../src/cli/cmd/tui/component/prompt/autocomplete"
+  shouldTrimLeadingSlashAutocomplete,
+} from "../../../src/cli/cmd/tui/component/prompt/slash-autocomplete"
 
 describe("prompt slash autocomplete", () => {
   test("falls back to inserting slash command text for commands without a UI handler", () => {
@@ -20,6 +21,58 @@ describe("prompt slash autocomplete", () => {
   test("does not insert non-slash options", () => {
     expect(slashAutocompleteInsertionText({ display: "@build" }, "@")).toBeNull()
     expect(slashAutocompleteInsertionText({ display: "goal" }, "/")).toBeNull()
+  })
+
+  test("does not trim a slash command inserted before existing text", () => {
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "/goal hello",
+        cursorOffset: "/goal ".length,
+        visible: "/",
+      }),
+    ).toBe(false)
+  })
+
+  test("trims a leading slash command when it is the active token at end of input", () => {
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "/goal",
+        cursorOffset: "/goal".length,
+        visible: "/",
+      }),
+    ).toBe(true)
+  })
+
+  test("does not trim when preserveInput is requested or the command is incomplete", () => {
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "/goal",
+        cursorOffset: "/goal".length,
+        visible: "/",
+        preserveInput: true,
+      }),
+    ).toBe(false)
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "/goal ",
+        cursorOffset: "/goal ".length,
+        visible: "/",
+      }),
+    ).toBe(false)
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "goal",
+        cursorOffset: "goal".length,
+        visible: "/",
+      }),
+    ).toBe(false)
+    expect(
+      shouldTrimLeadingSlashAutocomplete({
+        text: "/goal",
+        cursorOffset: "/goal".length,
+        visible: false,
+      }),
+    ).toBe(false)
   })
 
   test("detects exact fixed-argument slash aliases", () => {

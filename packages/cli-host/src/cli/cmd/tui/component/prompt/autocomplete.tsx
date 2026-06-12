@@ -17,6 +17,11 @@ import { useTerminalDimensions } from "@opentui/solid"
 import { Locale } from "@/util/locale"
 import type { PromptInfo } from "./history"
 import { useFrecency } from "./frecency"
+import {
+  matchesExactSlashArgumentAlias,
+  shouldTrimLeadingSlashAutocomplete,
+  slashAutocompleteInsertionText,
+} from "./slash-autocomplete"
 
 function removeLineRange(input: string) {
   const hashIndex = input.lastIndexOf("#")
@@ -67,23 +72,6 @@ export type AutocompleteOption = {
   isDirectory?: boolean
   onSelect?: () => void
   path?: string
-}
-
-export function matchesExactSlashArgumentAlias(
-  inputText: string,
-  options: Pick<AutocompleteOption, "argumentAliases">[],
-) {
-  const trimmed = inputText.trim()
-  return options.some((option) => option.argumentAliases?.some((alias) => alias.display.trim() === trimmed))
-}
-
-export function slashAutocompleteInsertionText(
-  selected: Pick<AutocompleteOption, "display" | "onSelect">,
-  visible: AutocompleteRef["visible"],
-) {
-  if (selected.onSelect) return null
-  if (visible !== "/" || !selected.display.startsWith("/")) return null
-  return selected.display.trimEnd() + " "
 }
 
 export function Autocomplete(props: {
@@ -569,7 +557,14 @@ export function Autocomplete(props: {
 
   function hide(input?: { preserveInput?: boolean }) {
     const text = props.input().plainText
-    if (!input?.preserveInput && store.visible === "/" && !text.endsWith(" ") && text.startsWith("/")) {
+    if (
+      shouldTrimLeadingSlashAutocomplete({
+        text,
+        cursorOffset: props.input().cursorOffset,
+        visible: store.visible,
+        preserveInput: input?.preserveInput,
+      })
+    ) {
       const cursor = props.input().logicalCursor
       props.input().deleteRange(0, 0, cursor.row, cursor.col)
       // Sync the prompt store immediately since onContentChange is async
