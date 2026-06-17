@@ -1914,12 +1914,22 @@ test("mode cost preserves over-200k pricing from base model", () => {
     },
   } as unknown as ModelsDev.Provider
 
-  const model = Provider.fromModelsDevProvider(provider).models["gpt-5.4-fast"]
+  const models = Provider.fromModelsDevProvider(provider).models
+  expect(models["gpt-5.4"]?.serviceTiers).toEqual([
+    {
+      id: "priority",
+      name: "fast",
+      description: "Fastest inference with increased plan usage.",
+    },
+  ])
+
+  const model = models["gpt-5.4-fast"]
   expect(model.cost.input).toEqual(5)
   expect(model.cost.output).toEqual(30)
   expect(model.cost.cache.read).toEqual(0.5)
   expect(model.cost.cache.write).toEqual(0)
   expect(model.options["serviceTier"]).toEqual("priority")
+  expect(model.defaultServiceTier).toEqual("priority")
   expect(model.cost.experimentalOver200K).toEqual({
     input: 5,
     output: 22.5,
@@ -1928,6 +1938,48 @@ test("mode cost preserves over-200k pricing from base model", () => {
       write: 0,
     },
   })
+})
+
+test("fast modes without service_tier do not advertise service tiers", () => {
+  const provider = {
+    id: "gateway",
+    name: "Gateway",
+    env: [],
+    models: {
+      "claude-opus-4-6": {
+        id: "claude-opus-4-6",
+        name: "Claude Opus 4.6",
+        family: "claude",
+        attachment: false,
+        reasoning: true,
+        tool_call: true,
+        cost: {
+          input: 15,
+          output: 75,
+        },
+        limit: {
+          context: 200_000,
+          output: 32_000,
+        },
+        experimental: {
+          modes: {
+            fast: {
+              provider: {
+                body: {
+                  speed: "fast",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  } as unknown as ModelsDev.Provider
+
+  const models = Provider.fromModelsDevProvider(provider).models
+  expect(models["claude-opus-4-6"]?.serviceTiers).toBeUndefined()
+  expect(models["claude-opus-4-6-fast"]?.defaultServiceTier).toBeUndefined()
+  expect(models["claude-opus-4-6-fast"]?.options["speed"]).toEqual("fast")
 })
 
 test("models.dev normalization fills required response fields", () => {
