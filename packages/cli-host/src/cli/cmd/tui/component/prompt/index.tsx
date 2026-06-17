@@ -35,6 +35,7 @@ import { useDialog } from "@tui/ui/dialog"
 import { DialogProvider as DialogProviderConnect } from "../dialog-provider"
 import { DialogAlert } from "../../ui/dialog-alert"
 import { useToast } from "../../ui/toast"
+import { ShimmerStatus } from "../shimmer-status"
 import { useKV } from "../../context/kv"
 import { createFadeIn } from "../../util/signal"
 import { useTextInputMousePointer } from "../../util/text-input-mouse-pointer"
@@ -49,6 +50,7 @@ import { interbaseRuntimeContext } from "@/interbase-runtime-context"
 import { CliTelemetryEntrypoint, CliTelemetryEvent } from "@interbase/cli-telemetry"
 import { emitCliBehaviorTelemetry } from "@/cli/telemetry"
 import { readGoalCommandTurnState } from "@/session/goal-store"
+import { FAST_SERVICE_TIER } from "@/provider/service-tier"
 import {
   canDrainQueuedSubmission,
   queuedSubmissionPreviewTextForSubmission,
@@ -251,6 +253,14 @@ export function Prompt(props: PromptProps) {
     editor.clearSelection()
   }
 
+  function requestForPromptSubmission(submission: Extract<QueuedSubmission, { type: "prompt" }>, queued: boolean) {
+    return requestForSubmission(submission, { queued, messageID: MessageID.ascending }) as PromptRequest
+  }
+
+  function requestForCommandSubmission(submission: Extract<QueuedSubmission, { type: "command" }>, queued: boolean) {
+    return requestForSubmission(submission, { queued, messageID: MessageID.ascending }) as CommandRequest
+  }
+
   function sendSubmission(submission: QueuedSubmission, queued: boolean) {
     history.append(submission.history)
     if (submission.type === "shell") {
@@ -263,7 +273,7 @@ export function Prompt(props: PromptProps) {
     }
     if (submission.type === "command") {
       void sdk.client.session
-        .command(requestForSubmission(submission, { queued, messageID: MessageID.ascending }) as CommandRequest)
+        .command(requestForCommandSubmission(submission, queued))
         .finally(() => {
           if (queued) setQueuedSubmissionPendingStart(false)
         })
@@ -284,7 +294,7 @@ export function Prompt(props: PromptProps) {
       return
     }
     void sdk.client.session
-      .prompt(requestForSubmission(submission, { queued, messageID: MessageID.ascending }) as PromptRequest)
+      .prompt(requestForPromptSubmission(submission, queued))
       .then(() => {
         lastSubmittedEditorSelectionKey = submission.submittedEditorSelectionKey
       })
@@ -867,6 +877,7 @@ export function Prompt(props: PromptProps) {
     }
 
     const variant = local.model.variant.current()
+    const serviceTier = local.model.serviceTier.current()
     let sessionID = props.sessionID
     if (sessionID == null) {
       const res = await sdk.client.session.create({
@@ -982,6 +993,7 @@ export function Prompt(props: PromptProps) {
             model: `${selectedModel.providerID}/${selectedModel.modelID}`,
             messageID,
             variant,
+            serviceTier,
             parts: nonTextParts
               .filter((x) => x.type === "file")
               .map((x) => ({
@@ -1003,6 +1015,7 @@ export function Prompt(props: PromptProps) {
             agent: agent.name,
             model: selectedModel,
             variant,
+            serviceTier,
             parts: [
               ...editorParts,
               {
@@ -1161,11 +1174,19 @@ export function Prompt(props: PromptProps) {
     if (!current) return ""
     return Locale.titlecase(current)
   })
+  const showFast = createMemo(
+    () => local.model.serviceTier.supportsFast() && local.model.serviceTier.current() === FAST_SERVICE_TIER,
+  )
+  const fastModeStatus = createMemo(() => local.model.serviceTier.status())
 
   const agentMetaAlpha = createFadeIn(() => !!local.agent.current(), animationsEnabled)
   const modelMetaAlpha = createFadeIn(() => !!local.agent.current() && store.mode === "normal", animationsEnabled)
   const variantMetaAlpha = createFadeIn(
     () => !!local.agent.current() && store.mode === "normal" && showVariant(),
+    animationsEnabled,
+  )
+  const fastMetaAlpha = createFadeIn(
+    () => !!local.agent.current() && store.mode === "normal" && showFast(),
     animationsEnabled,
   )
   const borderHighlight = createMemo(() => tint(theme.border, highlight(), agentMetaAlpha()))
@@ -1462,7 +1483,19 @@ export function Prompt(props: PromptProps) {
         </box>
         <Show when={props.showFooter !== false}>
           <box width="100%" flexDirection="row" justifyContent="space-between">
-            <Show when={status().type !== "idle"} fallback={props.hint ?? <text />}>
+            <Show
+              when={status().type !== "idle"}
+              fallback={
+                <Show when={fastModeStatus()} fallback={props.hint ?? <text />}>
+                  {(item) => (
+                    <ShimmerStatus
+                      message={item().enabled ? "Fast Mode On" : "Fast Mode Off"}
+                      startedAt={item().startedAt}
+                    />
+                  )}
+                </Show>
+              }
+            >
               <box
                 flexDirection="row"
                 gap={1}
@@ -1579,6 +1612,10 @@ export function Prompt(props: PromptProps) {
                                 {currentVariantLabel()}
                               </span>
                             </text>
+                          </Show>
+                          <Show when={showFast()}>
+                            <text fg={fadeColor(theme.textMuted, fastMetaAlpha())}>·</text>
+                            <text fg={fadeColor(theme.textMuted, fastMetaAlpha())}>Fast Mode</text>
                           </Show>
                         </box>
                       </Show>

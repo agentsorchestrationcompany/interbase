@@ -22,9 +22,10 @@ import { useEvent } from "@tui/context/event"
 import { SplitBorder } from "@tui/component/border"
 import { Spinner } from "@tui/component/spinner"
 import { HunkedDiffBlock } from "@tui/component/hunked-diff"
-import { selectedForeground, tint, useTheme } from "@tui/context/theme"
+import { selectedForeground, useTheme } from "@tui/context/theme"
 import { BoxRenderable, ScrollBoxRenderable, addDefaultParsers, TextAttributes, RGBA } from "@opentui/core"
 import { Prompt, type PromptRef } from "@tui/component/prompt"
+import { ShimmerStatus, SHIMMER_STATUS_DURATION } from "@tui/component/shimmer-status"
 import type {
   AssistantMessage,
   Part,
@@ -117,8 +118,7 @@ const context = createContext<{
 }>()
 
 const COPIED_MESSAGE = "Copied last message from agent"
-const COPIED_SHIMMER_PERIOD = 1400
-const COPIED_STATUS_DURATION = COPIED_SHIMMER_PERIOD * 2
+const COPIED_STATUS_DURATION = SHIMMER_STATUS_DURATION
 
 function use() {
   const ctx = useContext(context)
@@ -127,39 +127,7 @@ function use() {
 }
 
 function CopiedStatus(props: { startedAt: number }) {
-  const { theme } = useTheme()
-  const kv = useKV()
-  const animationsEnabled = kv.get("animations_enabled", true)
-  const [now, setNow] = createSignal(performance.now())
-  const timer = animationsEnabled ? setInterval(() => setNow(performance.now()), 50) : undefined
-
-  onCleanup(() => {
-    if (timer) clearInterval(timer)
-  })
-
-  const chars = COPIED_MESSAGE.split("")
-  const peak = tint(theme.primary, RGBA.fromInts(255, 255, 255), 0.86)
-
-  return (
-    <text fg={theme.success}>
-      <For each={chars}>
-        {(char, index) => {
-          const color = createMemo(() => {
-            if (!animationsEnabled) return theme.success
-            if (char === " ") return theme.success
-            const phase = ((now() - props.startedAt) % COPIED_SHIMMER_PERIOD) / COPIED_SHIMMER_PERIOD
-            const head = phase * (chars.length + 8) - 4
-            const distance = Math.abs(index() - head)
-            const core = distance < 1.4 ? 1 - distance / 1.4 : 0
-            const soft = distance < 6 ? (1 - distance / 6) * 0.38 : 0
-            return tint(theme.success, peak, Math.min(1, core * 0.95 + soft))
-          })
-
-          return <span style={{ fg: color() }}>{char}</span>
-        }}
-      </For>
-    </text>
-  )
+  return <ShimmerStatus message={COPIED_MESSAGE} startedAt={props.startedAt} />
 }
 
 export function Session() {
