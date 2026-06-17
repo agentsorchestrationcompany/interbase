@@ -36,15 +36,25 @@ describe("prompt submission queue", () => {
   })
 
   test("queued prompt and command requests receive fresh message ids at send time", () => {
-    const prompt = { type: "prompt" as const, request: { messageID: "old", value: 1 }, history: { input: "p" } }
-    const command = { type: "command" as const, request: { messageID: "old", value: 2 }, history: { input: "c" } }
+    const prompt = {
+      type: "prompt" as const,
+      request: { messageID: "old", value: 1, serviceTier: "priority" },
+      history: { input: "p" },
+    }
+    const command = {
+      type: "command" as const,
+      request: { messageID: "old", value: 2, serviceTier: "default" },
+      history: { input: "c" },
+    }
 
     expect(requestForSubmission(prompt, { queued: true, messageID: () => "new-prompt" })).toEqual({
       messageID: "new-prompt",
+      serviceTier: "priority",
       value: 1,
     })
     expect(requestForSubmission(command, { queued: true, messageID: () => "new-command" })).toEqual({
       messageID: "new-command",
+      serviceTier: "default",
       value: 2,
     })
     expect(requestForSubmission(prompt, { queued: false, messageID: () => "unused" })).toBe(prompt.request)

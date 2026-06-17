@@ -1,6 +1,6 @@
 import { createStore, produce } from "solid-js/store"
 import { createSimpleContext } from "./helper"
-import { batch, createEffect, createMemo } from "solid-js"
+import { batch, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import { useSync } from "@tui/context/sync"
 import { useTheme } from "@tui/context/theme"
 import { uniqueBy } from "remeda"
@@ -13,9 +13,13 @@ import { useSDK } from "./sdk"
 import { RGBA } from "@opentui/core"
 import { Filesystem } from "@/util/filesystem"
 import { useRoute } from "./route"
+import { SHIMMER_STATUS_DURATION } from "../component/shimmer-status"
+import { DEFAULT_SERVICE_TIER, FAST_SERVICE_TIER } from "@/provider/service-tier"
 import {
   persistedSessionModelSelection,
+  fastServiceTier,
   resolveCurrentModel,
+  resolveModelServiceTier,
   resolveSessionScopedModel,
   sameSessionModel,
   selectedModelVariant,
@@ -116,6 +120,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
         recent?: TuiModelSelection[]
         favorite?: TuiModelSelection[]
         variant?: Record<string, string | undefined>
+        serviceTier?: string
       }
 
       const [modelStore, setModelStore] = createStore<{
@@ -125,6 +130,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
         recent: TuiModelSelection[]
         favorite: TuiModelSelection[]
         variant: Record<string, string | undefined>
+        serviceTier?: string
       }>({
         ready: false,
         model: {},
@@ -132,11 +138,27 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
         recent: [],
         favorite: [],
         variant: {},
+        serviceTier: undefined,
       })
 
       const filePath = path.join(interbaseRuntimeContext.paths.state, "model.json")
       const state = {
         pending: false,
+      }
+      const [serviceTierStatus, setServiceTierStatus] = createSignal<{ enabled: boolean; startedAt: number }>()
+      let serviceTierStatusTimer: ReturnType<typeof setTimeout> | undefined
+
+      onCleanup(() => {
+        if (serviceTierStatusTimer) clearTimeout(serviceTierStatusTimer)
+      })
+
+      function showServiceTierStatus(enabled: boolean) {
+        if (serviceTierStatusTimer) clearTimeout(serviceTierStatusTimer)
+        setServiceTierStatus({ enabled, startedAt: performance.now() })
+        serviceTierStatusTimer = setTimeout(() => {
+          setServiceTierStatus(undefined)
+          serviceTierStatusTimer = undefined
+        }, SHIMMER_STATUS_DURATION)
       }
 
       function save() {
@@ -149,6 +171,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           recent: modelStore.recent,
           favorite: modelStore.favorite,
           variant: modelStore.variant,
+          serviceTier: modelStore.serviceTier,
         })
       }
 
@@ -157,6 +180,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           if (Array.isArray(x.recent)) setModelStore("recent", x.recent)
           if (Array.isArray(x.favorite)) setModelStore("favorite", x.favorite)
           if (typeof x.variant === "object" && x.variant !== null) setModelStore("variant", x.variant)
+          if (typeof x.serviceTier === "string") setModelStore("serviceTier", x.serviceTier)
         })
         .catch(() => {})
         .finally(() => {
@@ -238,6 +262,29 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           isModelValid,
         )
       })
+
+      function currentModelInfo() {
+        const m = currentModel()
+        if (!m) return undefined
+        const provider = sync.data.provider.find((x) => x.id === m.providerID)
+        return provider?.models[m.modelID]
+      }
+
+      function serviceTierByID(id: string | undefined) {
+        if (!id) return undefined
+        const tiers = currentModelInfo()?.serviceTiers
+        return tiers?.find((tier) => tier.id === id)
+      }
+
+      function effectiveServiceTier() {
+        const info = currentModelInfo()
+        if (!info) return undefined
+        return resolveModelServiceTier({
+          configured: modelStore.serviceTier,
+          serviceTiers: info.serviceTiers,
+          defaultServiceTier: info.defaultServiceTier,
+        })
+      }
 
       createEffect(() => {
         for (const item of sync.data.session) {
@@ -464,6 +511,34 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
               return
             }
             this.set(variants[index + 1])
+          },
+        },
+        serviceTier: {
+          configured() {
+            return modelStore.serviceTier
+          },
+          current() {
+            return effectiveServiceTier()
+          },
+          fast() {
+            return fastServiceTier(currentModelInfo()?.serviceTiers)
+          },
+          supportsFast() {
+            return !!this.fast()
+          },
+          status() {
+            return serviceTierStatus()
+          },
+          set(value: string | undefined) {
+            if (value && value !== DEFAULT_SERVICE_TIER && !serviceTierByID(value)) return
+            setModelStore("serviceTier", value)
+            save()
+          },
+          toggleFast() {
+            if (!this.supportsFast()) return
+            const next = effectiveServiceTier() === FAST_SERVICE_TIER ? DEFAULT_SERVICE_TIER : FAST_SERVICE_TIER
+            this.set(next)
+            showServiceTierStatus(next === FAST_SERVICE_TIER)
           },
         },
       }

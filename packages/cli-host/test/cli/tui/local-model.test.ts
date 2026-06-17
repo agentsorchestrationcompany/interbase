@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test"
 import {
+  fastServiceTier,
   persistedSessionModelSelection,
   resolveCurrentModel,
+  resolveModelServiceTier,
   resolveSessionScopedModel,
   sameSessionModel,
   selectedModelVariant,
@@ -131,5 +133,25 @@ describe("tui local model selection", () => {
         storedVariant: "high",
       }),
     ).toBe("high")
+  })
+
+  test("resolves fast service tier and explicit default selection", () => {
+    const serviceTiers = [{ id: "priority", name: "fast" }]
+
+    expect(fastServiceTier(serviceTiers)).toEqual({ id: "priority", name: "fast" })
+    expect(resolveModelServiceTier({ configured: "priority", serviceTiers })).toBe("priority")
+    expect(resolveModelServiceTier({ configured: "default", serviceTiers, defaultServiceTier: "priority" })).toBe(
+      "default",
+    )
+    expect(resolveModelServiceTier({ configured: "default", serviceTiers: undefined })).toBeUndefined()
+  })
+
+  test("ignores unsupported configured service tier and uses supported model default", () => {
+    const serviceTiers = [{ id: "priority", name: "fast" }]
+
+    expect(resolveModelServiceTier({ configured: "priority", serviceTiers: undefined })).toBeUndefined()
+    expect(resolveModelServiceTier({ configured: "flex", serviceTiers })).toBeUndefined()
+    expect(resolveModelServiceTier({ serviceTiers, defaultServiceTier: "priority" })).toBe("priority")
+    expect(resolveModelServiceTier({ serviceTiers, defaultServiceTier: "flex" })).toBeUndefined()
   })
 })

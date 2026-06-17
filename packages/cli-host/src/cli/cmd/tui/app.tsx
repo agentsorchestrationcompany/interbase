@@ -64,6 +64,7 @@ import type { RouteMap } from "@/cli/cmd/tui/plugin/api"
 import { FormatError, FormatUnknownError } from "@/cli/error"
 import { createSystemThemeObserver, resolveThemeMode } from "@/util/system-theme"
 import { INTERBASE_THEME_SCHEME } from "@interbase/overlay"
+import { FAST_SERVICE_TIER } from "@/provider/service-tier"
 
 import type { EventSource } from "./context/sdk"
 import { DialogVariant } from "./component/dialog-variant"
@@ -529,6 +530,18 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
       },
       onSelect: () => {
         dialog.replace(() => <DialogModel />)
+      },
+    },
+    {
+      title: local.model.serviceTier.current() === FAST_SERVICE_TIER ? "Disable fast mode" : "Enable fast mode",
+      value: "service_tier.fast",
+      category: "Agent",
+      hidden: !local.model.serviceTier.supportsFast(),
+      slash: {
+        name: "fast",
+      },
+      onSelect: () => {
+        local.model.serviceTier.toggleFast()
       },
     },
     {
