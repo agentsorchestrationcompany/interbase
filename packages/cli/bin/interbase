@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process'
-const target = "/Users/rk/Developer/agentsorchestrationcompany/interbase-prompt-slash-prefix-main/packages/cli-host/bin/interbase"
+const target = "/Users/rk/Developer/agentsorchestrationcompany/interbase-fast-mode/packages/cli-host/bin/interbase"
 const env = { ...process.env, ...{} }
 const result = spawnSync(target, process.argv.slice(2), { stdio: 'inherit', env })
 if (result.error) {
