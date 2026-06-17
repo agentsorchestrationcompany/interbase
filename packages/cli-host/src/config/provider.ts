@@ -2,6 +2,12 @@ import { Schema } from "effect"
 import { zod } from "@/util/effect-zod"
 import { PositiveInt, withStatics } from "@/util/schema"
 
+const ServiceTier = Schema.Struct({
+  id: Schema.String,
+  name: Schema.String,
+  description: Schema.optional(Schema.String),
+})
+
 export const Model = Schema.Struct({
   id: Schema.optional(Schema.String),
   name: Schema.optional(Schema.String),
@@ -55,6 +61,10 @@ export const Model = Schema.Struct({
   ),
   options: Schema.optional(Schema.Record(Schema.String, Schema.Any)),
   headers: Schema.optional(Schema.Record(Schema.String, Schema.String)),
+  serviceTiers: Schema.optional(
+    Schema.Array(ServiceTier).annotate({ description: "Provider service tiers supported by this model" }),
+  ),
+  defaultServiceTier: Schema.optional(Schema.String).annotate({ description: "Default service tier for this model" }),
   variants: Schema.optional(
     Schema.Record(
       Schema.String,
