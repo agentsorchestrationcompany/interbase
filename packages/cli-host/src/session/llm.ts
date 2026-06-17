@@ -24,6 +24,7 @@ import { InstallationVersion } from "@interbase/core/installation/version"
 import { EffectBridge } from "@/effect/bridge"
 import * as Option from "effect/Option"
 import * as OtelTracer from "@effect/opentelemetry/Tracer"
+import { DEFAULT_SERVICE_TIER } from "@/provider/service-tier"
 
 const log = Log.create({ service: "llm" })
 export const OUTPUT_TOKEN_MAX = ProviderTransform.OUTPUT_TOKEN_MAX
@@ -139,6 +140,15 @@ const live: Layer.Layer<
             providerOptions: item.options,
           })
       const options = mergeOptions(mergeOptions(mergeOptions(base, input.model.options), input.agent.options), variant)
+      const requestedServiceTier = input.user.serviceTier ?? input.model.defaultServiceTier
+      if (requestedServiceTier === DEFAULT_SERVICE_TIER && input.model.serviceTiers?.length) {
+        delete options.serviceTier
+      } else if (
+        requestedServiceTier &&
+        input.model.serviceTiers?.some((tier) => tier.id === requestedServiceTier)
+      ) {
+        options.serviceTier = requestedServiceTier
+      }
       if (isOpenaiOauth) {
         options.instructions = system.join("\n")
       }
