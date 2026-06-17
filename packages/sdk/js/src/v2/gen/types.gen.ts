@@ -390,6 +390,7 @@ export type UserMessage = {
     modelID: string
     variant?: string
   }
+  serviceTier?: string
   system?: string
   tools?: {
     [key: string]: boolean
@@ -1048,6 +1049,18 @@ export type ProviderConfig = {
           [key: string]: unknown | boolean | undefined
         }
       }
+      /**
+       * Provider service tiers supported by this model
+       */
+      serviceTiers?: Array<{
+        id: string
+        name: string
+        description?: string
+      }>
+      /**
+       * Default service tier for this model
+       */
+      defaultServiceTier?: string
     }
   }
 }
@@ -1305,6 +1318,12 @@ export type Model = {
       [key: string]: unknown
     }
   }
+  serviceTiers?: Array<{
+    id: string
+    name: string
+    description?: string
+  }>
+  defaultServiceTier?: string
 }
 
 export type Provider = {
@@ -5170,6 +5189,7 @@ export type SessionPromptData = {
     format?: OutputFormat
     system?: string
     variant?: string
+    serviceTier?: string
     parts: Array<TextPartInput | FilePartInput | AgentPartInput | SubtaskPartInput>
   }
   path: {
@@ -5384,6 +5404,7 @@ export type SessionPromptAsyncData = {
     format?: OutputFormat
     system?: string
     variant?: string
+    serviceTier?: string
     parts: Array<TextPartInput | FilePartInput | AgentPartInput | SubtaskPartInput>
   }
   path: {
@@ -5425,6 +5446,7 @@ export type SessionCommandData = {
     arguments: string
     command: string
     variant?: string
+    serviceTier?: string
     parts?: Array<{
       id?: string
       type: "file"

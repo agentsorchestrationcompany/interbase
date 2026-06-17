@@ -61,6 +61,7 @@ export type UserMessage = {
     providerID: string
     modelID: string
   }
+  serviceTier?: string
   system?: string
   tools?: {
     [key: string]: boolean
@@ -1078,6 +1079,18 @@ export type ProviderConfig = {
       headers?: {
         [key: string]: string
       }
+      /**
+       * Provider service tiers supported by this model
+       */
+      serviceTiers?: Array<{
+        id: string
+        name: string
+        description?: string
+      }>
+      /**
+       * Default service tier for this model
+       */
+      defaultServiceTier?: string
       provider?: {
         npm: string
       }
@@ -1507,6 +1520,12 @@ export type Model = {
   headers: {
     [key: string]: string
   }
+  serviceTiers?: Array<{
+    id: string
+    name: string
+    description?: string
+  }>
+  defaultServiceTier?: string
 }
 
 export type Provider = {
@@ -2492,6 +2511,7 @@ export type SessionPromptData = {
     tools?: {
       [key: string]: boolean
     }
+    serviceTier?: string
     parts: Array<TextPartInput | FilePartInput | AgentPartInput | SubtaskPartInput>
   }
   path: {
@@ -2587,6 +2607,7 @@ export type SessionPromptAsyncData = {
     tools?: {
       [key: string]: boolean
     }
+    serviceTier?: string
     parts: Array<TextPartInput | FilePartInput | AgentPartInput | SubtaskPartInput>
   }
   path: {
@@ -2630,6 +2651,7 @@ export type SessionCommandData = {
     model?: string
     arguments: string
     command: string
+    serviceTier?: string
   }
   path: {
     /**
