@@ -45,6 +45,19 @@ describe("prompt slash command routing", () => {
     ).toEqual({ command: "demo", arguments: "1" })
   })
 
+  test("does not route invalid or non-matching text-only TUI slash commands", () => {
+    expect(
+      resolvePromptSlashCommand({
+        inputText: "/demo2",
+        serverCommands: [],
+        tuiSlashCommands: [
+          { display: "demo" },
+          { display: "/demo", argumentAliases: [{ display: "/demo1", arguments: "1" }] },
+        ],
+      }),
+    ).toBeNull()
+  })
+
   test("does not route TUI slash commands that have UI handlers", () => {
     expect(
       resolvePromptSlashCommand({
@@ -109,6 +122,15 @@ describe("prompt slash command routing", () => {
       resolvePromptSlashCommandAction({
         inputText: "/aliases extra",
         tuiSlashCommands: [{ display: "/aliases", onSelect: () => {} }],
+      }),
+    ).toBeNull()
+  })
+
+  test("does not resolve TUI slash command actions when no action command matches", () => {
+    expect(
+      resolvePromptSlashCommandAction({
+        inputText: "/aliases",
+        tuiSlashCommands: [{ display: "/status", onSelect: () => {} }],
       }),
     ).toBeNull()
   })

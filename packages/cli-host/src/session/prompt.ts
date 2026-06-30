@@ -759,6 +759,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         time: { created: Date.now() },
         agent: lastUser.agent,
         model: lastUser.model,
+        serviceTier: lastUser.serviceTier,
       }
       yield* sessions.updateMessage(summaryUserMsg)
       yield* sessions.updatePart({
@@ -1002,6 +1003,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           modelID: model.modelID,
           variant,
         },
+        serviceTier: input.serviceTier,
         system: input.system,
         format: input.format,
       }
@@ -1595,6 +1597,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 agent: lastUser.agent,
                 model: lastUser.model,
                 variant: lastUser.model.variant,
+                serviceTier: lastUser.serviceTier,
                 parts: [{ type: "text", text: continuationText, synthetic: true }],
                 noReply: true,
               })
@@ -1617,6 +1620,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 agent: lastUser.agent,
                 model: lastUser.model,
                 variant: lastUser.model.variant,
+                serviceTier: lastUser.serviceTier,
                 parts: [{ type: "text", text: steeringText, synthetic: true }],
                 noReply: true,
               })
@@ -1963,6 +1967,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           ],
           noReply: true,
           variant: input.variant,
+          serviceTier: input.serviceTier,
         })
         yield* bus.publish(Command.Event.Executed, {
           name: input.command,
@@ -1978,6 +1983,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             parts: [{ type: "text", text: consumed.steering, synthetic: true }],
             noReply: true,
             variant: input.variant,
+            serviceTier: input.serviceTier,
           })
         }
         if (consumed.continuation) {
@@ -2125,6 +2131,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         agent: userAgent,
         parts,
         variant: input.variant,
+        serviceTier: input.serviceTier,
       })
       yield* bus.publish(Command.Event.Executed, {
         name: input.command,
@@ -2196,6 +2203,7 @@ export const PromptInput = Schema.Struct({
   format: Schema.optional(MessageV2.Format),
   system: Schema.optional(Schema.String),
   variant: Schema.optional(Schema.String),
+  serviceTier: Schema.optional(Schema.String),
   parts: Schema.Array(
     Schema.Union([
       MessageV2.TextPartInput,
@@ -2230,6 +2238,7 @@ export const CommandInput = Schema.Struct({
   arguments: Schema.String,
   command: Schema.String,
   variant: Schema.optional(Schema.String),
+  serviceTier: Schema.optional(Schema.String),
   // Inlined (no identifier annotation) to keep the original SDK output — the
   // PromptInput call site below references FilePartInput by ref via the
   // Schema export in message-v2.ts.

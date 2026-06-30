@@ -2795,6 +2795,31 @@ it.live("applies agent variant only when using agent model", () =>
   ),
 )
 
+it.live("stores prompt service tier on the user message", () =>
+  provideTmpdirInstance(
+    (_dir) =>
+      Effect.gen(function* () {
+        const prompt = yield* SessionPrompt.Service
+        const sessions = yield* Session.Service
+        const session = yield* sessions.create({})
+
+        const msg = yield* prompt.prompt({
+          sessionID: session.id,
+          agent: "build",
+          noReply: true,
+          serviceTier: "priority",
+          parts: [{ type: "text", text: "hello" }],
+        })
+
+        if (msg.info.role !== "user") throw new Error("expected user message")
+        expect(msg.info.serviceTier).toBe("priority")
+
+        yield* sessions.remove(session.id)
+      }),
+    { git: true, config: cfg },
+  ),
+)
+
 // Agent / command resolution errors
 
 it.live(

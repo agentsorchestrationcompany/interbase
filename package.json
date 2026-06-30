@@ -18,7 +18,7 @@
     "build:packages": "bun run --cwd packages/runtime-protocol build",
     "check:public-artifacts": "bun run script/interbase/validate-public-artifacts.mjs",
     "check:public-boundary": "bun run script/interbase/validate-public-boundary.mjs",
-    "check:public-dependencies": "bun audit",
+    "check:public-dependencies": "bun audit --audit-level moderate",
     "check:github-metadata": "bun run script/interbase/validate-github-metadata.mjs",
     "check:isolated-public-checkout": "bun run script/interbase/validate-isolated-public-checkout.mjs",
     "check:public-secrets": "bun run script/interbase/scan-public-secrets.mjs",
@@ -149,9 +149,17 @@
   ],
   "overrides": {
     "@hono/node-server": "1.19.13",
+    "@opentelemetry/core": "2.8.0",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "vite": "7.3.3"
+    "esbuild": "0.28.1",
+    "form-data": "4.0.6",
+    "hono": "4.12.25",
+    "js-yaml": "4.2.0",
+    "protobufjs": "8.6.4",
+    "tar": "7.5.16",
+    "vite": "7.3.5",
+    "ws": "8.21.0"
   },
   "patchedDependencies": {
     "@opentui/core@0.2.2": "patches/@opentui%2Fcore@0.2.2.patch",

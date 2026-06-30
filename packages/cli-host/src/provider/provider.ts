@@ -888,6 +888,13 @@ const ProviderLimit = Schema.Struct({
   output: Schema.Finite,
 })
 
+const ServiceTier = Schema.Struct({
+  id: Schema.String,
+  name: Schema.String,
+  description: optionalOmitUndefined(Schema.String),
+})
+export type ServiceTier = Types.DeepMutable<Schema.Schema.Type<typeof ServiceTier>>
+
 export const Model = Schema.Struct({
   id: ModelID,
   providerID: ProviderID,
@@ -902,6 +909,8 @@ export const Model = Schema.Struct({
   headers: Schema.Record(Schema.String, Schema.String),
   release_date: Schema.String,
   variants: optionalOmitUndefined(Schema.Record(Schema.String, Schema.Record(Schema.String, Schema.Any))),
+  serviceTiers: optionalOmitUndefined(Schema.Array(ServiceTier)),
+  defaultServiceTier: optionalOmitUndefined(Schema.String),
 })
   .annotate({ identifier: "Model" })
   .pipe(withStatics((s) => ({ zod: zod(s) })))
@@ -984,6 +993,26 @@ function cost(c: ModelsDev.Model["cost"]): Model["cost"] {
   return result
 }
 
+function modeServiceTier(mode: string, opts: NonNullable<NonNullable<ModelsDev.Model["experimental"]>["modes"]>[string]) {
+  if (mode !== "fast") return undefined
+  return opts.provider?.body && typeof opts.provider.body.service_tier === "string" ? opts.provider.body.service_tier : undefined
+}
+
+function serviceTiers(model: ModelsDev.Model): Model["serviceTiers"] {
+  const tiers = Object.entries(model.experimental?.modes ?? {}).flatMap(([mode, opts]) => {
+    const serviceTier = modeServiceTier(mode, opts)
+    if (!serviceTier) return []
+    return [
+      {
+        id: serviceTier,
+        name: mode,
+        description: "Fastest inference with increased plan usage.",
+      },
+    ]
+  })
+  return tiers.length ? tiers : undefined
+}
+
 function fromModelsDevModel(provider: ModelsDev.Provider, model: ModelsDev.Model): Model {
   const base: Model = {
     id: ModelID.make(model.id),
@@ -1027,6 +1056,7 @@ function fromModelsDevModel(provider: ModelsDev.Provider, model: ModelsDev.Model
     },
     release_date: model.release_date ?? "",
     variants: {},
+    serviceTiers: serviceTiers(model),
   }
 
   return {
@@ -1056,6 +1086,7 @@ export function fromModelsDevProvider(provider: ModelsDev.Provider): Info {
             )
           : base.options,
         headers: opts.provider?.headers ?? base.headers,
+        defaultServiceTier: modeServiceTier(mode, opts) ?? base.defaultServiceTier,
       }
     }
   }
@@ -1249,6 +1280,8 @@ const layer: Layer.Layer<
               family: model.family ?? existingModel?.family ?? "",
               release_date: model.release_date ?? existingModel?.release_date ?? "",
               variants: {},
+              serviceTiers: model.serviceTiers ?? existingModel?.serviceTiers,
+              defaultServiceTier: model.defaultServiceTier ?? existingModel?.defaultServiceTier,
             }
             const merged = mergeDeep(ProviderTransform.variants(parsedModel), model.variants ?? {})
             parsedModel.variants = mapValues(

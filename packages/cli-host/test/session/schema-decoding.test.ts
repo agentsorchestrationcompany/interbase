@@ -268,6 +268,7 @@ describe("SessionPrompt input schemas", () => {
     const decode = decodeUnknown(SessionPrompt.PromptInput)
     const expected = {
       sessionID,
+      serviceTier: "priority",
       parts: [
         { type: "text" as const, text: "hello" },
         { type: "file" as const, mime: "image/png", url: "data:image/png;base64,AAAA" },
@@ -299,6 +300,7 @@ describe("SessionPrompt input schemas", () => {
       sessionID,
       arguments: "--flag",
       command: "deploy",
+      serviceTier: "priority",
     }
     const input: unknown = expected
     expect(decode(input)).toEqual(expected)
