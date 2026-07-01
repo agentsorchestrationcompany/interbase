@@ -5,6 +5,7 @@ import { webSearchArgsSchema } from "./tool/web-search"
 import { webSearchPreviewArgsSchema } from "./tool/web-search-preview"
 import { imageGenerationArgsSchema } from "./tool/image-generation"
 import type { OpenAIResponsesTool } from "./openai-responses-api-types"
+import { providerComputerUsePreviewTool } from "@/computer-use/provider-adapter"
 
 export function prepareResponsesTools({
   tools,
@@ -74,6 +75,11 @@ export function prepareResponsesTools({
             openaiTools.push({
               type: "local_shell",
             })
+            break
+          }
+          case "openai.computer_use":
+          case "openai.computer_use_preview": {
+            openaiTools.push(providerComputerUsePreviewTool(tool.args as Parameters<typeof providerComputerUsePreviewTool>[0]))
             break
           }
           case "openai.web_search_preview": {

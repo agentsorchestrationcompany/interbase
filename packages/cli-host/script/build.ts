@@ -55,9 +55,20 @@ const skipInstall = process.argv.includes("--skip-install")
 const sourcemapsFlag = process.argv.includes("--sourcemaps")
 const plugin = createSolidTransformPlugin()
 const extensionModule = process.env.INTERBASE_CLI_EXTENSION_MODULE
+const extensionHostRoot = process.env.INTERBASE_CLI_EXTENSION_HOST_ROOT
+  ? path.resolve(process.env.INTERBASE_CLI_EXTENSION_HOST_ROOT)
+  : undefined
 const skipEmbedWebUi = process.argv.includes("--skip-embed-web-ui")
 const binaryName = InterbaseOverlay.brand.binaryName
 const binaryPackageBase = binaryName
+
+function resolveExtensionHostImport(specifier: string) {
+  if (!extensionHostRoot) return undefined
+  const prefix = "@interbase/cli-host/"
+  if (specifier === "@interbase/cli-host") return path.join(extensionHostRoot, "src", "index.ts")
+  if (!specifier.startsWith(prefix)) return undefined
+  return path.join(extensionHostRoot, "src", `${specifier.slice(prefix.length)}.ts`)
+}
 
 const createEmbeddedWebUIBundle = async () => {
   console.log(`Building Web UI to embed in the binary`)
@@ -88,6 +99,24 @@ const embeddedFileMap = skipEmbedWebUi ? null : await createEmbeddedWebUIBundle(
 const plugins = extensionModule
   ? [
       plugin,
+      ...(extensionHostRoot
+        ? [
+            {
+              name: "interbase-cli-extension-host-alias",
+              setup(build: {
+                onResolve: (
+                  options: { filter: RegExp },
+                  handler: (args: { path: string }) => { path: string } | undefined,
+                ) => void
+              }) {
+                build.onResolve({ filter: /^@interbase\/cli-host(?:\/.*)?$/ }, (args) => {
+                  const resolved = resolveExtensionHostImport(args.path)
+                  return resolved ? { path: resolved } : undefined
+                })
+              },
+            },
+          ]
+        : []),
       {
         name: "interbase-cli-extensions",
         setup(build: {

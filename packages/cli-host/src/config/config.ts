@@ -37,9 +37,11 @@ import { ConfigProvider } from "./provider"
 import { ConfigServer } from "./server"
 import { ConfigSkills } from "./skills"
 import { ConfigVariable } from "./variable"
+import { ConfigComputerUse } from "./computer-use"
 import { Npm } from "@interbase/core/npm"
 import { InvalidError, JsonError } from "./error"
 import { currentInterbaseRuntimeContext, interbaseRuntimeContext } from "@/interbase-runtime-context"
+import { GlobalBus } from "@/bus/global"
 
 const log = Log.create({ service: "config" })
 
@@ -89,18 +91,6 @@ export type Layout = ConfigLayout.Layout
 const LogLevelRef = Schema.Literals(["DEBUG", "INFO", "WARN", "ERROR"]).annotate({
   identifier: "LogLevel",
   description: "Log level",
-})
-
-const ComputerUse = Schema.Struct({
-  enabled: Schema.optional(Schema.Boolean).annotate({
-    description: "Enable computer use tools for providers that support them",
-  }),
-  backend: Schema.optional(Schema.Literal("native")).annotate({
-    description: "Computer use backend implementation",
-  }),
-}).annotate({
-  identifier: "ComputerUseConfig",
-  description: "Computer use tool configuration",
 })
 
 // The Effect Schema is the canonical source of truth. The `.zod` compatibility
@@ -213,7 +203,6 @@ export const Info = Schema.Struct({
   layout: Schema.optional(ConfigLayout.Layout).annotate({ description: "@deprecated Always uses stretch layout." }),
   permission: Schema.optional(ConfigPermission.Info),
   tools: Schema.optional(Schema.Record(Schema.String, Schema.Boolean)),
-  computer_use: Schema.optional(ComputerUse),
   enterprise: Schema.optional(
     Schema.Struct({
       url: Schema.optional(Schema.String).annotate({ description: "Enterprise URL" }),
@@ -231,6 +220,9 @@ export const Info = Schema.Struct({
   ).annotate({
     description:
       "Thresholds for truncating tool output. When output exceeds either limit, the full text is written to the truncation directory and a preview is returned.",
+  }),
+  computer_use: Schema.optional(ConfigComputerUse.Info).annotate({
+    description: "Computer-use configuration. Tools are enabled by default; native automation requires a verified backend.",
   }),
   compaction: Schema.optional(
     Schema.Struct({
@@ -586,7 +578,11 @@ export const layer = Layer.effect(
 
         for (const dir of directories) {
           if (dir.endsWith(".interbase") || dir === runtimeConfigDirectory) {
-            for (const file of ["interbase.json", "interbase.jsonc"]) {
+            const files =
+              dir === runtimeConfigDirectory
+                ? ["config.json", "interbase.json", "interbase.jsonc"]
+                : ["interbase.json", "interbase.jsonc"]
+            for (const file of files) {
               const source = path.join(dir, file)
               log.debug(`loading config from ${source}`)
               yield* merge(source, yield* loadFile(source))
@@ -744,6 +740,9 @@ export const layer = Layer.effect(
 
     const invalidate = Effect.fn("Config.invalidate")(function* () {
       yield* invalidateGlobal
+      yield* InstanceState.invalidate(state)
+      const ctx = yield* InstanceState.context
+      GlobalBus.emit("event", { directory: ctx.directory, project: ctx.project.id, payload: { type: "config.invalidate" } })
     })
 
     const updateGlobal = Effect.fn("Config.updateGlobal")(function* (config: Info) {

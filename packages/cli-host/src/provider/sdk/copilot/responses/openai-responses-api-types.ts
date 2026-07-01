@@ -202,6 +202,12 @@ export type OpenAIResponsesTool =
   | {
       type: "local_shell"
     }
+  | {
+      type: "computer_use_preview"
+      display_width: number | undefined
+      display_height: number | undefined
+      environment: "browser" | "mac" | "windows" | "ubuntu" | undefined
+    }
 
 export type OpenAIResponsesReasoning = {
   type: "reasoning"

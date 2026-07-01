@@ -503,6 +503,48 @@ it.live("loop calls LLM and returns assistant message", () =>
   ),
 )
 
+it.live("explicit @computer mention injects computer-use guidance", () =>
+  provideTmpdirServer(
+    Effect.fnUntraced(function* ({ llm }) {
+      const prompt = yield* SessionPrompt.Service
+      const sessions = yield* Session.Service
+      const chat = yield* sessions.create({ title: "Computer mention" })
+
+      yield* prompt.prompt({
+        sessionID: chat.id,
+        agent: "build",
+        parts: [{ type: "text", text: "@computer open the settings app" }],
+      })
+
+      const inputs = yield* llm.inputs
+      const request = JSON.stringify(inputs[0])
+      expect(request).toContain("The user explicitly mentioned @computer")
+      expect(request).toContain("computer_observe first")
+      expect(request).toContain("computer_act for one desktop action at a time")
+    }),
+    { git: true, config: providerCfg },
+  ),
+)
+
+it.live("ordinary prompt does not inject computer-use guidance", () =>
+  provideTmpdirServer(
+    Effect.fnUntraced(function* ({ llm }) {
+      const prompt = yield* SessionPrompt.Service
+      const sessions = yield* Session.Service
+      const chat = yield* sessions.create({ title: "No computer mention" })
+
+      yield* prompt.prompt({
+        sessionID: chat.id,
+        agent: "build",
+        parts: [{ type: "text", text: "open the settings app" }],
+      })
+
+      expect(JSON.stringify((yield* llm.inputs)[0])).not.toContain("The user explicitly mentioned @computer")
+    }),
+    { git: true, config: providerCfg },
+  ),
+)
+
 it.live("prompt emits v2 prompted and synthetic events", () =>
   provideTmpdirServer(
     Effect.fnUntraced(function* () {
@@ -1919,6 +1961,61 @@ it.live(
       { git: true, config: providerCfg },
     ),
   30_000,
+)
+
+it.live("computer command renders setup status without running the model", () =>
+  provideTmpdirServer(
+    Effect.fnUntraced(function* ({ llm }) {
+      const prompt = yield* SessionPrompt.Service
+      const sessions = yield* Session.Service
+      const chat = yield* sessions.create({ title: "Computer command" })
+
+      const result = yield* prompt.command({
+        sessionID: chat.id,
+        command: "computer",
+        arguments: "",
+        agent: "build",
+      })
+
+      expect(
+        result.parts.some(
+          (part) =>
+            part.type === "text" &&
+            part.synthetic === true &&
+            part.metadata?.kind === "interbase_command_result" &&
+            part.text.includes("Computer use setup") &&
+            part.text.includes("Status: enabled") &&
+            part.text.includes("computer_observe"),
+        ),
+      ).toBe(true)
+      expect(yield* llm.calls).toBe(0)
+    }),
+    { git: true, config: providerCfg },
+  ),
+)
+
+it.live("computer on command enables native computer-use config", () =>
+  provideTmpdirServer(
+    Effect.fnUntraced(function* ({ llm }) {
+      const prompt = yield* SessionPrompt.Service
+      const sessions = yield* Session.Service
+      const config = yield* Config.Service
+      const chat = yield* sessions.create({ title: "Computer mock command" })
+
+      const result = yield* prompt.command({
+        sessionID: chat.id,
+        command: "computer",
+        arguments: "on",
+        agent: "build",
+      })
+
+      const info = yield* config.get()
+      expect(info.computer_use).toMatchObject({ enabled: true, backend: "native" })
+      expect(result.parts.some((part) => part.type === "text" && part.text.includes("Computer use enabled."))).toBe(true)
+      expect(yield* llm.calls).toBe(0)
+    }),
+    { git: true, config: providerCfg },
+  ),
 )
 
 it.live(
